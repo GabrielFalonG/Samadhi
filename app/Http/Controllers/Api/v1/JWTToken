@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Classes\ResponseClass;
+use App\Http\Controllers\Controller;
+use Exception;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Facades\JWTFactory;
+
+class JWTToken extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        try {
+            $payload = JWTFactory::customClaims([
+                'user' => 'User1 Test',
+                'iat' => time(),
+                'exp' => time() + 3600, // 1 hora
+            ])->make();
+
+            $token = JWTAuth::encode($payload)->get();
+            $data  = [
+                'jwt' => $token,
+            ];
+
+            //return ResponseClas::sendResponse($data,'',204);
+        } catch (Exception $e) {
+            //throw $th;
+        }
+    }
+}

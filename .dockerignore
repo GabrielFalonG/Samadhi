@@ -1,0 +1,5 @@
+docker/mysql/data
+docker/postgresql/data
+.git
+vendor
+node_modules
