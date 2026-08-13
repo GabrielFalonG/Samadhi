@@ -1,57 +1,161 @@
-.PHONY: help up fresh-up build shell tail stop down queue-status queue-restart queue-logs
+.PHONY: help \
+	env-dev env-prod \
+	dev-up dev-build dev-rebuild dev-shell dev-logs dev-stop dev-down \
+	prod-up prod-build prod-rebuild prod-shell prod-logs prod-stop prod-down
 
 .DEFAULT_GOAL := help
 
-## Muestra esta ayuda con todos los comandos disponibles
+
+# ============================================================
+# CONFIGURACIÓN
+# ============================================================
+
+COMPOSE_DEV := docker compose
+COMPOSE_PROD := docker compose -f docker-compose.prod.yml
+
+DEV_CONTAINER := app
+PROD_CONTAINER := samadhi-prod-app
+
+
+# ============================================================
+# HELP
+# ============================================================
+
 help:
-	@echo "Comandos disponibles:"
-	@awk '/^[a-zA-Z\-_0-9]+:/ { \
-		helpMessage = match(lastLine, /^## (.*)/, result); \
-		if (helpMessage) { \
-			printf "  \033[36m%-15s\033[0m %s\n", substr($$1, 1, length($$1)-1), result[1]; \
-		} \
-	} \
-	{ lastLine = $$0 }' $(MAKEFILE_LIST)
+	@echo ""
+	@echo "Ambientes:"
+	@echo "  make env-dev        Copiar .env.dev → .env"
+	@echo "  make env-prod       Copiar .env.prod → .env"
+	@echo ""
+	@echo "Desarrollo:"
+	@echo "  make dev-up         Levantar DEV"
+	@echo "  make dev-build      Reconstruir y levantar DEV"
+	@echo "  make dev-rebuild    Reconstruir completamente DEV"
+	@echo "  make dev-shell      Entrar al contenedor DEV"
+	@echo "  make dev-logs       Ver logs DEV"
+	@echo "  make dev-stop       Detener DEV"
+	@echo "  make dev-down       Eliminar DEV"
+	@echo ""
+	@echo "Producción:"
+	@echo "  make prod-up        Levantar PROD"
+	@echo "  make prod-build     Reconstruir y levantar PROD"
+	@echo "  make prod-rebuild   Reconstruir completamente PROD"
+	@echo "  make prod-shell     Entrar al contenedor PROD"
+	@echo "  make prod-logs      Ver logs PROD"
+	@echo "  make prod-stop      Detener PROD"
+	@echo "  make prod-down      Eliminar PROD"
 	@echo ""
 
-## Iniciar todos los contenedores en segundo plano
-up:
-	docker compose up -d
 
-## Construir o reconstruir las imágenes de Docker
-build:
-	docker compose build
+# ============================================================
+# AMBIENTES
+# ============================================================
 
-## Recrear contenedores y ejecutar migraciones con seeders como root
-fresh-up:
-	docker compose down -v
-	docker compose up -d
-	docker compose exec -u root app php artisan migrate:fresh --seed
+## Copiar configuración DEV
+env-dev:
+	@echo "=== Configurando ambiente DEV ==="
+	@cp .env.dev .env
+	@echo "✓ .env.dev copiado a .env"
 
-## Abrir consola interactiva bash/sh como root dentro del contenedor
-shell:
-	docker compose exec -it -u root app sh
 
-## Ver logs en vivo del contenedor principal de la app
-tail:
-	docker compose logs -f app
+## Copiar configuración PROD
+env-prod:
+	@echo "=== Configurando ambiente PROD ==="
+	@cp .env.prod .env
+	@echo "✓ .env.prod copiado a .env"
 
-## Detener los contenedores sin eliminarlos
-stop:
-	docker compose stop
 
-## Eliminar contenedores, redes y volúmenes asociados
-down:
-	docker compose down
+# ============================================================
+# DESARROLLO
+# ============================================================
 
-## Ver el estado en tiempo real de PHP-FPM y los workers de Supervisor
-queue-status:
-	docker compose exec -it app supervisorctl status
+## Levantar DEV
+dev-up: env-dev
+	@echo "=== Levantando entorno DEV ==="
+	$(COMPOSE_DEV) up -d
+	@echo "✓ DEV iniciado"
 
-## Reiniciar los workers en Supervisor para aplicar cambios de código
-queue-restart:
-	docker compose exec app supervisorctl restart laravel-worker:*
 
-## Ver los logs en vivo del procesador de colas de Laravel
-queue-logs:
-	docker compose exec -it app tail -f /var/www/html/storage/logs/worker.log
+## Reconstruir y levantar DEV
+dev-build: env-dev
+	@echo "=== Reconstruyendo entorno DEV ==="
+	$(COMPOSE_DEV) build
+	$(COMPOSE_DEV) up -d
+	@echo "✓ DEV reconstruido y levantado"
+
+
+## Reconstruir completamente DEV sin caché
+dev-rebuild: env-dev
+	@echo "=== Reconstrucción completa de DEV ==="
+	$(COMPOSE_DEV) down
+	$(COMPOSE_DEV) build --no-cache
+	$(COMPOSE_DEV) up -d
+	@echo "✓ DEV reconstruido completamente"
+
+
+## Entrar al contenedor DEV
+dev-shell:
+	$(COMPOSE_DEV) exec -it $(DEV_CONTAINER) sh
+
+
+## Ver logs DEV
+dev-logs:
+	$(COMPOSE_DEV) logs -f
+
+
+## Detener DEV
+dev-stop:
+	$(COMPOSE_DEV) stop
+
+
+## Eliminar DEV
+dev-down:
+	$(COMPOSE_DEV) down
+
+
+# ============================================================
+# PRODUCCIÓN
+# ============================================================
+
+## Levantar PROD
+prod-up: env-prod
+	@echo "=== Levantando entorno PROD ==="
+	$(COMPOSE_PROD) up -d
+	@echo "✓ PROD iniciado"
+
+
+## Reconstruir y levantar PROD
+prod-build: env-prod
+	@echo "=== Reconstruyendo entorno PROD ==="
+	$(COMPOSE_PROD) build app
+	$(COMPOSE_PROD) up -d
+	@echo "✓ PROD reconstruido y levantado"
+
+
+## Reconstruir completamente PROD sin caché
+prod-rebuild: env-prod
+	@echo "=== Reconstrucción completa de PROD ==="
+	$(COMPOSE_PROD) down
+	$(COMPOSE_PROD) build --no-cache app
+	$(COMPOSE_PROD) up -d
+	@echo "✓ PROD reconstruido completamente"
+
+
+## Entrar al contenedor PROD
+prod-shell:
+	docker exec -it $(PROD_CONTAINER) sh
+
+
+## Ver logs PROD
+prod-logs:
+	$(COMPOSE_PROD) logs -f
+
+
+## Detener PROD
+prod-stop:
+	$(COMPOSE_PROD) stop
+
+
+## Eliminar PROD
+prod-down:
+	$(COMPOSE_PROD) down

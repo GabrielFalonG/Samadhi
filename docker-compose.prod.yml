@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: samadhi-prod-app
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./.env.prod:/var/www/.env.prod
+    env_file:
+      - .env.prod
+    depends_on:
+      - db
+      - redis
+    networks:
+      - samadhi-network
+
+  db:
+    image: mysql:8.0
+    container_name: samadhi-prod-db
+    restart: always
+    env_file:
+      - .env.prod
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_prod_data:/var/lib/mysql
+    networks:
+      - samadhi-network
+
+  redis:
+    image: redis:alpine
+    container_name: samadhi-prod-redis
+    restart: always
+    networks:
+      - samadhi-network
+
+networks:
+  samadhi-network:
+    driver: bridge
+
+volumes:
+  mysql_prod_data:

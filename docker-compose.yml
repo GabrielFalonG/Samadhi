@@ -1,103 +1,154 @@
 ####################################### DOCKER ##########################################
+#########               Laravel / PHP-FPM - DEV                    #############
 ######### Crear una imagen docker build -f Dockerfile -t laravel . #############
 ######### Para inciar un contenedor docker compose up -d ################################
 #########################################################################################
 
-version: '3.8'
-
 services:
-  # Application Service
+
   app:
-    container_name: php-fpm
+    container_name: samadhi-dev-app
+    image: laravel-app:dev
+
     build:
-      context: ./
+      context: .
       dockerfile: Dockerfile
+
     volumes:
       - .:/var/www/html:rw
+
+    working_dir: /var/www/html
+
     tty: true
+
     ports:
       - "9000:9000"
       - "9003:9003"
+
     environment:
-      XDEBUG_MODE: "debug"
-      XDEBUG_CONFIG: "client_host=host.docker.internal client_port=9003"
-    working_dir: /var/www/html
+      XDEBUG_MODE: debug
+      XDEBUG_CONFIG: client_host=host.docker.internal client_port=9003
+
     depends_on:
       - db
       - redis
       - node
+
     networks:
       - samadhi-dev
 
-  # Database Service
+
+  # ============================================================
+  # MySQL - DEV
+  # ============================================================
+
   db:
+    container_name: samadhi-dev-db
     image: mysql:5.7
-    container_name: mysql
+
     restart: unless-stopped
+
     ports:
       - "3306:3306"
+
     environment:
       MYSQL_DATABASE: laravel
       MYSQL_ROOT_PASSWORD: password
       MYSQL_USER: laravel
       MYSQL_PASSWORD: password
+
     volumes:
       - ./docker/mysql/data:/var/lib/mysql
+
     command: --default-authentication-plugin=mysql_native_password
+
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ppassword"]
       interval: 10s
       timeout: 5s
       retries: 5
+
     networks:
       - samadhi-dev
 
-  # Redis Service
+
+  # ============================================================
+  # Redis - DEV
+  # ============================================================
+
   redis:
-    container_name: redis
+    container_name: samadhi-dev-redis
     image: redis:7.2.0-alpine
+
     restart: unless-stopped
+
     command: redis-server --maxmemory 256mb --maxmemory-policy noeviction
+
     ports:
       - "6379:6379"
+
     volumes:
       - ./docker/redis/data:/data
+
     networks:
       - samadhi-dev
 
-  # Node Service
+
+  # ============================================================
+  # Node / Vite - DEV
+  # ============================================================
+
   node:
-    container_name: node
+    container_name: samadhi-dev-node
     image: node:22.14-alpine
+
+    working_dir: /var/www/html
+
     tty: true
+
     ports:
       - "5173:5173"
-    working_dir: /var/www/html
+
     command: npm run dev -- --host 0.0.0.0
+
     volumes:
       - ./:/var/www/html:rw
+
     networks:
       - samadhi-dev
 
-  # Web Server Service
+
+  # ============================================================
+  # Nginx - DEV
+  # ============================================================
+
   nginx:
+    container_name: samadhi-dev-nginx
     image: nginx:alpine
-    container_name: nginx
+
     tty: true
+
     ports:
       - "8080:80"
+
     volumes:
-      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
       - .:/var/www/html
+
     depends_on:
       - app
       - db
       - node
       - redis
+
     networks:
       - samadhi-dev
 
-# Red global
+
+# ============================================================
+# NETWORK
+# ============================================================
+
 networks:
   samadhi-dev:
     driver: bridge

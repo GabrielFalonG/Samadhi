@@ -1,0 +1,165 @@
+# ==============================================================================
+# ETAPA 1: Compilación de Assets con Node.js
+# ==============================================================================
+FROM node:20-alpine AS frontend
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci
+
+COPY . .
+
+RUN npm run build
+
+
+# ==============================================================================
+# ETAPA 2: Instalación de Dependencias de PHP
+# ==============================================================================
+FROM composer:2.6 AS vendor
+
+WORKDIR /app
+
+# Dependencias necesarias para GD
+RUN apk add --no-cache \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    && docker-php-ext-configure gd \
+        --with-freetype \
+        --with-jpeg \
+    && docker-php-ext-install gd
+
+# Copiar únicamente los archivos necesarios para resolver dependencias
+COPY composer.json composer.lock ./
+
+# Instalar dependencias de producción
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-scripts
+
+# Verificar que Composer realmente generó vendor
+RUN test -f /app/vendor/autoload.php
+
+
+# ==============================================================================
+# ETAPA 3: Imagen Final de Producción
+# ==============================================================================
+FROM php:8.2-fpm
+
+WORKDIR /var/www/html
+
+
+# ==============================================================================
+# 1. Dependencias del sistema
+# ==============================================================================
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nginx \
+    supervisor \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    libzip-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# ==============================================================================
+# 2. Extensiones PHP
+# ==============================================================================
+
+RUN docker-php-ext-configure gd \
+        --with-freetype \
+        --with-jpeg \
+    && docker-php-ext-install \
+        pdo \
+        pdo_mysql \
+        mbstring \
+        exif \
+        pcntl \
+        bcmath \
+        gd \
+        zip
+
+
+# ==============================================================================
+# 3. Redis
+# ==============================================================================
+
+RUN pecl install redis \
+    && docker-php-ext-enable redis
+
+
+# ==============================================================================
+# 4. Configuraciones
+# ==============================================================================
+COPY docker/prod/php/php.ini /usr/local/etc/php/conf.d/custom-php.ini
+COPY docker/prod/nginx/default.conf /etc/nginx/sites-available/default
+COPY docker/prod/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/prod/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+
+# ==============================================================================
+# 5. Código de la aplicación
+# ==============================================================================
+
+COPY . /var/www/html
+
+
+# ==============================================================================
+# 6. Vendor generado por Composer
+# ==============================================================================
+
+COPY --from=vendor /app/vendor /var/www/html/vendor
+
+RUN echo "=== VENDOR DESPUES DEL COPY ===" \
+    && ls -ld /var/www/html/vendor \
+    && ls -l /var/www/html/vendor/autoload.php
+
+
+# ==============================================================================
+# 7. Assets compilados por Node
+# ==============================================================================
+
+COPY --from=frontend /app/public/build /var/www/html/public/build
+
+
+# ==============================================================================
+# 8. Limpiar cachés y permisos
+# ==============================================================================
+
+RUN rm -f /var/www/html/bootstrap/cache/*.php \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 \
+        /var/www/html/storage \
+        /var/www/html/bootstrap/cache \
+    && echo "=== VENDOR AL FINAL DEL BUILD ===" \
+    && ls -ld /var/www/html/vendor \
+    && ls -l /var/www/html/vendor/autoload.php
+
+
+# ==============================================================================
+# 9. Puerto
+# ==============================================================================
+
+EXPOSE 8080
+
+
+# ==============================================================================
+# 10. EntryPoint
+# ==============================================================================
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
