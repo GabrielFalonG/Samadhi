@@ -4,101 +4,60 @@ set -e
 echo "=== Iniciando contenedor de producción ==="
 
 # ============================================================
-# 1. Configuración de entorno
+# 1. Configuración desde variables de entorno
 # ============================================================
 
-ENV_FILE="/var/www/.env.prod"
 LARAVEL_ENV="/var/www/html/.env"
 
-if [ -f "$ENV_FILE" ]; then
-
-    echo "=== Encontrado $ENV_FILE ==="
-    echo "=== Usando configuración PROD local ==="
-
-    cp "$ENV_FILE" "$LARAVEL_ENV"
-
-    # Exportar las variables del .env para que estén disponibles
-    # para los comandos ejecutados por este script.
-    set -a
-    . "$LARAVEL_ENV"
-    set +a
-
-else
-
-    echo "=== No se encontró $ENV_FILE ==="
-    echo "=== Usando variables de entorno proporcionadas por Railway ==="
-
-    # Railway proporciona las variables directamente al contenedor.
-    # Laravel puede leerlas desde el entorno del proceso.
-    touch "$LARAVEL_ENV"
-
-fi
-
-
-# ============================================================
-# 2. Verificar APP_KEY
-# ============================================================
-
-if [ -n "${APP_KEY:-}" ]; then
-
-    echo "APP_KEY existente encontrada y cargada."
-
-else
-
-    # Si estamos en PROD local y existe .env.prod,
-    # podemos generar una APP_KEY si está vacía.
-    if [ -f "$ENV_FILE" ]; then
-
-        echo "APP_KEY está vacía. Generando nueva clave..."
-
-        NEW_KEY=$(php artisan key:generate --show)
-
-        sed "s|^APP_KEY=.*|APP_KEY=$NEW_KEY|" \
-            "$LARAVEL_ENV" > /tmp/env.tmp
-
-        cat /tmp/env.tmp > "$LARAVEL_ENV"
-
-        rm -f /tmp/env.tmp
-
-        export APP_KEY="$NEW_KEY"
-
-        echo "APP_KEY generada correctamente."
-
-    else
-
-        echo "ERROR: APP_KEY no está definida."
-        echo "Configurá APP_KEY en las variables de Railway."
-        exit 1
-
-    fi
-
-fi
-
+echo "=== Configuración mediante variables de entorno ==="
 
 if [ -z "${APP_KEY:-}" ]; then
-    echo "ERROR: APP_KEY continúa vacía."
+    echo "ERROR: APP_KEY no está definida."
+    echo "Variables APP_* disponibles:"
+    env | grep '^APP_' | sed 's/APP_KEY=.*/APP_KEY=***OCULTA***/'
     exit 1
 fi
 
-echo "APP_KEY disponible correctamente."
+echo "APP_KEY recibida correctamente."
 
+# Crear .env para Laravel
+touch "$LARAVEL_ENV"
 
-# ============================================================
-# 3. Verificar configuración cargada
-# ============================================================
+cat > "$LARAVEL_ENV" <<EOF
+APP_NAME="${APP_NAME:-Samadhi}"
+APP_ENV="${APP_ENV:-production}"
+APP_KEY="${APP_KEY}"
+APP_DEBUG="${APP_DEBUG:-false}"
+APP_URL="${APP_URL:-}"
+
+LOG_CHANNEL="${LOG_CHANNEL:-stack}"
+LOG_LEVEL="${LOG_LEVEL:-error}"
+
+DB_CONNECTION="${DB_CONNECTION:-mysql}"
+DB_HOST="${DB_HOST:-}"
+DB_PORT="${DB_PORT:-3306}"
+DB_DATABASE="${DB_DATABASE:-}"
+DB_USERNAME="${DB_USERNAME:-}"
+DB_PASSWORD="${DB_PASSWORD:-}"
+
+CACHE_STORE="${CACHE_STORE:-file}"
+SESSION_DRIVER="${SESSION_DRIVER:-file}"
+QUEUE_CONNECTION="${QUEUE_CONNECTION:-sync}"
+
+REDIS_HOST="${REDIS_HOST:-}"
+REDIS_PASSWORD="${REDIS_PASSWORD:-}"
+REDIS_PORT="${REDIS_PORT:-6379}"
+EOF
 
 echo "=== Configuración Laravel ==="
-
-echo "APP_ENV=${APP_ENV:-}"
-echo "DB_HOST=${DB_HOST:-}"
-echo "DB_DATABASE=${DB_DATABASE:-}"
-echo "QUEUE_CONNECTION=${QUEUE_CONNECTION:-}"
-echo "CACHE_STORE=${CACHE_STORE:-}"
-echo "SESSION_DRIVER=${SESSION_DRIVER:-}"
-echo "REDIS_HOST=${REDIS_HOST:-}"
-
+echo "APP_ENV=$APP_ENV"
+echo "DB_HOST=$DB_HOST"
+echo "DB_DATABASE=$DB_DATABASE"
+echo "QUEUE_CONNECTION=$QUEUE_CONNECTION"
+echo "CACHE_STORE=$CACHE_STORE"
+echo "SESSION_DRIVER=$SESSION_DRIVER"
+echo "REDIS_HOST=$REDIS_HOST"
 echo "================================"
-
 
 # ============================================================
 # 4. Esperar Base de Datos
