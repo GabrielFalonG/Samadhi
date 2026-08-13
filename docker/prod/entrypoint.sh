@@ -4,69 +4,78 @@ set -e
 echo "=== Iniciando contenedor de producción ==="
 
 # ============================================================
-# 1. Copiar configuración PROD a .env de Laravel
+# 1. Configuración de entorno
 # ============================================================
 
 ENV_FILE="/var/www/.env.prod"
 LARAVEL_ENV="/var/www/html/.env"
 
 if [ -f "$ENV_FILE" ]; then
+
     echo "=== Encontrado $ENV_FILE ==="
-    echo "=== Copiando configuración a $LARAVEL_ENV ==="
+    echo "=== Usando configuración PROD local ==="
 
     cp "$ENV_FILE" "$LARAVEL_ENV"
+
+    # Exportar las variables del .env para que estén disponibles
+    # para los comandos ejecutados por este script.
+    set -a
+    . "$LARAVEL_ENV"
+    set +a
+
 else
+
     echo "=== No se encontró $ENV_FILE ==="
     echo "=== Usando variables de entorno proporcionadas por Railway ==="
 
+    # Railway proporciona las variables directamente al contenedor.
+    # Laravel puede leerlas desde el entorno del proceso.
     touch "$LARAVEL_ENV"
+
 fi
-
-echo "Archivo de producción encontrado: $ENV_FILE"
-
-echo "Copiando configuración de producción a .env..."
-
-cp "$ENV_FILE" "$LARAVEL_ENV"
-
-echo "Configuración de producción copiada correctamente."
 
 
 # ============================================================
 # 2. Verificar APP_KEY
 # ============================================================
 
-CURRENT_KEY=$(grep "^APP_KEY=" "$ENV_FILE" | cut -d '=' -f2-)
+if [ -n "${APP_KEY:-}" ]; then
 
-if [ -z "$CURRENT_KEY" ]; then
-
-    echo "APP_KEY está vacía. Generando nueva clave..."
-
-    NEW_KEY=$(php artisan key:generate --show)
-
-    sed "s|^APP_KEY=.*|APP_KEY=$NEW_KEY|" \
-        "$ENV_FILE" > /tmp/env.tmp
-
-    cat /tmp/env.tmp > "$ENV_FILE"
-
-    rm -f /tmp/env.tmp
-
-    # Copiar nuevamente porque .env.prod acaba de cambiar
-    cp "$ENV_FILE" "$LARAVEL_ENV"
-
-    export APP_KEY="$NEW_KEY"
-
-    echo "APP_KEY generada correctamente."
+    echo "APP_KEY existente encontrada y cargada."
 
 else
 
-    export APP_KEY="$CURRENT_KEY"
+    # Si estamos en PROD local y existe .env.prod,
+    # podemos generar una APP_KEY si está vacía.
+    if [ -f "$ENV_FILE" ]; then
 
-    echo "APP_KEY existente encontrada y cargada."
+        echo "APP_KEY está vacía. Generando nueva clave..."
+
+        NEW_KEY=$(php artisan key:generate --show)
+
+        sed "s|^APP_KEY=.*|APP_KEY=$NEW_KEY|" \
+            "$LARAVEL_ENV" > /tmp/env.tmp
+
+        cat /tmp/env.tmp > "$LARAVEL_ENV"
+
+        rm -f /tmp/env.tmp
+
+        export APP_KEY="$NEW_KEY"
+
+        echo "APP_KEY generada correctamente."
+
+    else
+
+        echo "ERROR: APP_KEY no está definida."
+        echo "Configurá APP_KEY en las variables de Railway."
+        exit 1
+
+    fi
 
 fi
 
 
-if [ -z "$APP_KEY" ]; then
+if [ -z "${APP_KEY:-}" ]; then
     echo "ERROR: APP_KEY continúa vacía."
     exit 1
 fi
@@ -80,13 +89,13 @@ echo "APP_KEY disponible correctamente."
 
 echo "=== Configuración Laravel ==="
 
-echo "APP_ENV=$(grep '^APP_ENV=' "$LARAVEL_ENV" | cut -d '=' -f2-)"
-echo "DB_HOST=$(grep '^DB_HOST=' "$LARAVEL_ENV" | cut -d '=' -f2-)"
-echo "DB_DATABASE=$(grep '^DB_DATABASE=' "$LARAVEL_ENV" | cut -d '=' -f2-)"
-echo "QUEUE_CONNECTION=$(grep '^QUEUE_CONNECTION=' "$LARAVEL_ENV" | cut -d '=' -f2-)"
-echo "CACHE_STORE=$(grep '^CACHE_STORE=' "$LARAVEL_ENV" | cut -d '=' -f2-)"
-echo "SESSION_DRIVER=$(grep '^SESSION_DRIVER=' "$LARAVEL_ENV" | cut -d '=' -f2-)"
-echo "REDIS_HOST=$(grep '^REDIS_HOST=' "$LARAVEL_ENV" | cut -d '=' -f2-)"
+echo "APP_ENV=${APP_ENV:-}"
+echo "DB_HOST=${DB_HOST:-}"
+echo "DB_DATABASE=${DB_DATABASE:-}"
+echo "QUEUE_CONNECTION=${QUEUE_CONNECTION:-}"
+echo "CACHE_STORE=${CACHE_STORE:-}"
+echo "SESSION_DRIVER=${SESSION_DRIVER:-}"
+echo "REDIS_HOST=${REDIS_HOST:-}"
 
 echo "================================"
 
@@ -95,9 +104,9 @@ echo "================================"
 # 4. Esperar Base de Datos
 # ============================================================
 
-if [ -n "$DB_HOST" ]; then
+if [ -n "${DB_HOST:-}" ]; then
 
-    echo "Esperando conexión a la base de datos en $DB_HOST:${DB_PORT:-3306}..."
+    echo "Esperando conexión a la base de datos en ${DB_HOST}:${DB_PORT:-3306}..."
 
     max_tries=30
     count=0
@@ -127,6 +136,10 @@ if [ -n "$DB_HOST" ]; then
     done
 
     echo "¡Conexión a la base de datos establecida!"
+
+else
+
+    echo "ADVERTENCIA: DB_HOST no está definido."
 
 fi
 
