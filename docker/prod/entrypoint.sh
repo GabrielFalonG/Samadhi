@@ -10,9 +10,16 @@ echo "=== Iniciando contenedor de producción ==="
 ENV_FILE="/var/www/.env.prod"
 LARAVEL_ENV="/var/www/html/.env"
 
-if [ ! -f "$ENV_FILE" ]; then
-    echo "ERROR: No se encontró $ENV_FILE"
-    exit 1
+if [ -f "$ENV_FILE" ]; then
+    echo "=== Encontrado $ENV_FILE ==="
+    echo "=== Copiando configuración a $LARAVEL_ENV ==="
+
+    cp "$ENV_FILE" "$LARAVEL_ENV"
+else
+    echo "=== No se encontró $ENV_FILE ==="
+    echo "=== Usando variables de entorno proporcionadas por Railway ==="
+
+    touch "$LARAVEL_ENV"
 fi
 
 echo "Archivo de producción encontrado: $ENV_FILE"
