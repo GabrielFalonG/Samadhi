@@ -132,7 +132,7 @@ php artisan storage:link
 
 echo "Ejecutando migraciones..."
 
-php artisan migrate --seed --force
+php artisan migrate --force
 
 
 # ============================================================
