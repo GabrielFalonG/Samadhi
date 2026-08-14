@@ -125,7 +125,7 @@ class ProductRepository implements ProductRepositoryInterface
         return DB::transaction(function () use ($data) {
             $product = new Product();
             $product->title = $data->title;
-            $product->slug = $data->slug;
+            $product->slug = $this->generateSlug($data->title);
             $product->price = $data->price;
             $product->active = $data->active;
             $product->description = $data->description;
@@ -185,7 +185,7 @@ class ProductRepository implements ProductRepositoryInterface
         }
 
         $extension = $image->getClientOriginalExtension();
-        $filename = "{$product->slug}.{$extension}";
+        $filename = "{$product->slug}-" . time() . ".{$extension}";
         return $image->storeAs('products', $filename, 'public');
     }
 
