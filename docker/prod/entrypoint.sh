@@ -118,12 +118,17 @@ php artisan event:cache
 
 
 # ============================================================
-# 6. Storage
+# 6 Storage
 # ============================================================
 
 echo "Configurando storage..."
 
-php artisan storage:link
+mkdir -p /var/www/html/storage/app/public
+
+chown www-data:www-data /var/www/html/storage/app/public
+chmod 775 /var/www/html/storage/app/public
+
+php artisan storage:link || true
 
 
 # ============================================================
