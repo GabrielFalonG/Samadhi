@@ -111,7 +111,9 @@ class ProductRepository implements ProductRepositoryInterface
         $i = 1;
 
         while (
-            Product::where('slug', $slug)->exists()
+            Product::withTrashed()
+                        ->where('slug', $slug)
+                        ->exists()
         ) {
             $slug = "{$original}-{$i}";
             $i++;
