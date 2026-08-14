@@ -1,7 +1,7 @@
 <div class="group relative flex h-full flex-col justify-between overflow-hidden rounded-[2rem] bg-[#FCFBF7] p-4 shadow-sm border border-stone-200/50 transition duration-300 hover:shadow-md">
     <div>
         <!-- Contenedor de Imagen -->
-        <div class="relative mb-5 aspect-[4/3] w-full overflow-hidden rounded-[1.5rem] bg-white flex items-center justify-center p-2">
+        <div class="relative mb-5 aspect-[4/3] w-full overflow-hidden rounded-[1.5rem] bg-[#FCFBF7] flex items-center justify-center p-2">
             {{-- Badge de Descuento --}}
             @if(!empty($item['discount_percentage']))
                 <span class="absolute top-3 left-3 z-10 rounded-lg bg-[#8C6D46] px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
@@ -20,11 +20,6 @@
                  alt="{{ $item['name'] ?? $item['title'] }}"
                  class="h-full w-full object-contain object-center transition duration-500 group-hover:scale-105" />
         </div>
-
-        <!-- Categoría / Subtítulo -->
-        <p class="mb-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-[#B89B6A]">
-            {{ $item['category'] ?? 'AROMATERAPIA' }}
-        </p>
 
         <!-- Título con la tipografía de la app -->
         <h3 class="text-xl font-bold text-stone-800 leading-snug">
