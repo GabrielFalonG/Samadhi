@@ -151,7 +151,6 @@ class ProductRepository implements ProductRepositoryInterface
     {
         return DB::transaction(function () use ($product, $data) {
             $product->title = $data->title;
-            $product->slug = $data->slug;
             $product->price = $data->price;
             $product->active = $data->active;
             $product->description = $data->description;
