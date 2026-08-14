@@ -103,6 +103,7 @@ RUN pecl install redis \
 # 4. Configuraciones
 # ==============================================================================
 COPY docker/prod/php/php.ini /usr/local/etc/php/conf.d/custom-php.ini
+COPY docker/prod/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY docker/prod/nginx/default.conf /etc/nginx/sites-available/default
 COPY docker/prod/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/prod/entrypoint.sh /usr/local/bin/entrypoint.sh
@@ -115,6 +116,8 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 # ==============================================================================
 
 COPY . /var/www/html
+# Nunca utilizar Vite HMR en producción
+RUN rm -f /var/www/html/public/hot
 
 
 # ==============================================================================

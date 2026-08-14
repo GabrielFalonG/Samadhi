@@ -7,4 +7,5 @@ docker/postgresql/data
 .git
 vendor
 node_modules
+public/hot
 
