@@ -82,18 +82,71 @@
             {{-- Cuerpo de la Card --}}
             <div class="p-6">
                 {{-- Preview Box --}}
-                <div class="flex h-56 w-full items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50">
-                    @if($this->imagePreview)
-                        <img src="{{ $this->imagePreview }}" class="h-full w-full object-contain">
-                    @else
-                        <div class="p-4 text-center">
-                            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-violet-100">
-                                <x-heroicon-o-photo class="h-7 w-7 text-violet-600"/>
-                            </div>
-                            <h3 class="mt-3 text-base font-semibold text-slate-800">Sin imagen</h3>
-                            <p class="mt-1 text-xs text-slate-500">JPG · PNG · WEBP</p>
+                <div class="relative flex h-56 w-full items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50">
+
+                    {{-- Spinner mientras se procesa la imagen --}}
+                    <div
+                        wire:loading
+                        wire:target="form.image"
+                        class="absolute inset-0 z-10 bg-slate-50"
+                    >
+                        <div class="flex h-full w-full flex-col items-center justify-center text-center">
+                            <svg
+                                class="h-10 w-10 animate-spin text-violet-600"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    class="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    stroke-width="4"
+                                />
+                                <path
+                                    class="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                />
+                            </svg>
+
+                            <p class="mt-3 text-sm font-medium text-slate-600">
+                                Procesando imagen...
+                            </p>
                         </div>
-                    @endif
+                    </div>
+
+                    {{-- Preview --}}
+                    <div
+                        wire:loading.remove
+                        wire:target="form.image"
+                        class="flex h-full w-full items-center justify-center"
+                    >
+                        @if($this->imagePreview)
+                            <img
+                                src="{{ $this->imagePreview }}"
+                                class="h-full w-full object-contain"
+                                alt="Vista previa"
+                            >
+                        @else
+                            <div class="p-4 text-center">
+                                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-violet-100">
+                                    <x-heroicon-o-photo class="h-7 w-7 text-violet-600"/>
+                                </div>
+
+                                <h3 class="mt-3 text-base font-semibold text-slate-800">
+                                    Sin imagen
+                                </h3>
+
+                                <p class="mt-1 text-xs text-slate-500">
+                                    JPG · PNG · WEBP
+                                </p>
+                            </div>
+                        @endif
+                    </div>
+
                 </div>
 
                 {{-- Botones de Acción --}}
@@ -112,8 +165,17 @@
                         @endif
 
                         {{-- Botón Cambiar / Seleccionar --}}
-                        <label class="flex flex-1 cursor-pointer items-center justify-center rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-within:ring-2 focus-within:ring-violet-500 focus-within:ring-offset-2">
-                            <input type="file" class="hidden" wire:model.blur="form.image" accept="image/*">
+                        <label wire:loading.class="cursor-not-allowed opacity-50" wire:target="form.image"
+                            class="flex flex-1 cursor-pointer items-center justify-center rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-within:ring-2 focus-within:ring-violet-500 focus-within:ring-offset-2">
+                            <input
+                                type="file"
+                                class="hidden"
+                                wire:model="form.image"
+                                wire:loading.attr="disabled"
+                                wire:target="form.image"
+                                accept="image/*"
+                            >
+                            {{-- <input wire:loading.attr="disabled" wire:target="form.image" type="file" class="hidden" wire:model.blur="form.image" accept="image/*"> --}}
                             <x-heroicon-o-arrow-up-tray class="mr-2 h-4 w-4 text-slate-500"/>
                             {{ $this->imagePreview ? 'Cambiar' : 'Seleccionar' }}
                         </label>
