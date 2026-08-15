@@ -4,6 +4,7 @@ namespace App\Repositories\SqlDB;
 
 use App\Models\Category;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
+use Illuminate\Support\Facades\Cache;
 use Exception;
 
 class CategoryRepository implements CategoryRepositoryInterface
@@ -11,10 +12,15 @@ class CategoryRepository implements CategoryRepositoryInterface
     public function getActiveCategories()
     {
         try {
-            return Category::query()->where('is_active', true)
+             return Cache::remember(
+                'get.active.categories',
+                now()->addMinutes(10),
+                fn () => Category::query()
+                                    ->where('is_active', true)
                                     ->where('is_featured', true)
                                     ->orderBy('id', 'asc')
-                                    ->get();
+                                    ->get()
+            );
         } catch (Exception $e) {
             throw $e;
         }

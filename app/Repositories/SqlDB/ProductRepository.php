@@ -20,11 +20,11 @@ class ProductRepository implements ProductRepositoryInterface
     public function paginated(ProductFilterData $filters): LengthAwarePaginator
     {
         return Product::query()
-        ->with('categories')
-        ->when($filters->categories, function ($query, $category) {
-            $query->whereHas('categories', function ($q) use ($category) {
-                $q->whereIn('categories.id', $category);
-            });
+        ->when($filters->categories, function ($query, $categories) {
+            $query->with('categories')
+                  ->whereHas('categories', function ($q) use ($categories) {
+                      $q->whereIn('categories.id', $categories);
+                  });
         }, function ($query) {
             $query->whereHas('categories', function ($q) {
                 $q->where('categories.id', \App\Models\Category::DEFAULT_ID);
@@ -106,78 +106,79 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function generateSlug(string $title): string
     {
-        $slug = Str ::slug($title);
-        $original = $slug;
-        $i = 1;
-
-        while (
-            Product::withTrashed()
-                        ->where('slug', $slug)
-                        ->exists()
-        ) {
-            $slug = "{$original}-{$i}";
-            $i++;
+        try {
+            $lastProductId = Product::withTrashed()->latest('id')->value('id');
+            $slug = Str::slug($title);
+            return "{$slug}-" .  ($lastProductId + 1);
+        } catch (Exception $e) {
+            throw $e;
         }
-
-        return $slug;
     }
 
     public function create(ProductSaveData $data): Product
     {
-        return DB::transaction(function () use ($data) {
-            $product = new Product();
-            $product->title = $data->title;
-            $product->slug = $this->generateSlug($data->title);
-            $product->price = $data->price;
-            $product->active = $data->active;
-            $product->description = $data->description;
-            $product->long_description = $data->long_description;
-            $product->ingredients = $data->ingredients;
+        try {
+            return DB::transaction(function () use ($data) {
+                $product = new Product();
+                $product->title = $data->title;
+                $product->slug = $this->generateSlug($data->title);
+                $product->price = $data->price;
+                $product->active = $data->active;
+                $product->description = $data->description;
+                $product->long_description = $data->long_description;
+                $product->ingredients = $data->ingredients;
 
-            // 1. Primer save para generar el ID en DB (si storeImage usa $product->id)
-            $product->save();
-
-            if ($data->image) {
-                $product->image_url = $this->storeImage($data->image, $product);
+                // 1. Primer save para generar el ID en DB (si storeImage usa $product->id)
                 $product->save();
-            }
 
-            // Asociar categorías
-            $product->categories()->sync($data->categories);
+                if ($data->image) {
+                    $product->image_url = $this->storeImage($data->image, $product);
+                    $product->save();
+                }
 
-            return $product;
-        });
+                // Asociar categorías
+                $product->categories()->sync($data->categories);
+
+                return $product;
+            });
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     public function update(Product $product, ProductSaveData $data): Product
     {
-        return DB::transaction(function () use ($product, $data) {
-            $product->title = $data->title;
-            $product->price = $data->price;
-            $product->active = $data->active;
-            $product->description = $data->description;
-            $product->long_description = $data->long_description;
-            $product->ingredients = $data->ingredients;
+        try {
+            return DB::transaction(function () use ($product, $data) {
+                $product->title = $data->title;
+                $product->price = $data->price;
+                $product->active = $data->active;
+                $product->description = $data->description;
+                $product->long_description = $data->long_description;
+                $product->ingredients = $data->ingredients;
 
-            // Si el usuario subió una imagen nueva
-            if ($data->image) {
-                // 1. (Opcional) Borrar la imagen anterior del Storage si existía
-                if ($product->image_url && Storage::disk('public')->exists($product->image_url)) {
-                    Storage::disk('public')->delete($product->image_url);
+                // Si el usuario subió una imagen nueva
+                if ($data->image) {
+                    // 1. (Opcional) Borrar la imagen anterior del Storage si existía
+                    if ($product->image_url && Storage::disk('public')->exists($product->image_url)) {
+                        Storage::disk('public')->delete($product->image_url);
+                    }
+
+                    // 2. Guardar la nueva imagen y asignar la ruta
+                    $product->image_url = $this->storeImage($data->image, $product);
                 }
 
-                // 2. Guardar la nueva imagen y asignar la ruta
-                $product->image_url = $this->storeImage($data->image, $product);
-            }
+                // Se persisten todos los cambios (atributos + nueva imagen_url si aplicó)
+                $product->save();
 
-            // Se persisten todos los cambios (atributos + nueva imagen_url si aplicó)
-            $product->save();
+                // Sincronizar categorías
+                $product->categories()->sync($data->categories);
 
-            // Sincronizar categorías
-            $product->categories()->sync($data->categories);
-
-            return $product;
-        });
+                return $product;
+            });
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     protected function storeImage(UploadedFile $image, Product $product): string

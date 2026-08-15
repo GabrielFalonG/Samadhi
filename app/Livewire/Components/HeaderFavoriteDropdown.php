@@ -4,6 +4,7 @@ namespace App\Livewire\Components;
 
 use App\Models\Product;
 use App\Services\Favorite\Contracts\FavoriteServiceInterface;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -11,6 +12,7 @@ class HeaderFavoriteDropdown extends Component
 {
     protected FavoriteServiceInterface $favoriteService;
 
+    public ?Collection $products = null;
     public array $favoriteIds = [];
 
     public function mount(): void
@@ -26,8 +28,8 @@ class HeaderFavoriteDropdown extends Component
     #[On('favorite-updated')]
     public function loadFavorites(): void
     {
-        $products = $this->favoriteService->getFavoriteProducts();
-        $this->favoriteIds = $products->pluck('id')->toArray();
+        $this->products = $this->favoriteService->getFavoriteProducts();
+        $this->favoriteIds = $this->products->pluck('id')->toArray();
     }
 
     public function removeFavorite(int $productId): void
@@ -40,11 +42,8 @@ class HeaderFavoriteDropdown extends Component
 
     public function render()
     {
-        // Consultamos la BD usando los IDs obtenidos del servicio de Redis
-        $products = Product::whereIn('id', $this->favoriteIds)->get();
-
         return view('livewire.favorite.header-favorite-dropdown', [
-            'products' => $products,
+            'products' => $this->products,
             'count'    => count($this->favoriteIds),
         ]);
     }

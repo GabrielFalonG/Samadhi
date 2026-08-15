@@ -48,7 +48,6 @@ class ProductForm extends Form
         return new ProductSaveData(
             productId: null,
             title: $this->title,
-            slug: $productService->generateSlug($this->title),
             description: $this->description,
             long_description: $this->long_description,
             price: $this->price,

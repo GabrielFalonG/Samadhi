@@ -10,7 +10,6 @@ class ProductSaveData
     public function __construct(
         public readonly ?int $productId,
         public readonly string $title,
-        public readonly string $slug,
         public readonly ?string $description,
         public readonly ?string $long_description,
         public readonly float $price,
