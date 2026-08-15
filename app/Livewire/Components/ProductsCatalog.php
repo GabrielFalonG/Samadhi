@@ -132,8 +132,15 @@ class ProductsCatalog extends Component
 
     public function render()
     {
+        $start = microtime(true);
+        logger()->info('START PRODUCTS');
+        $products = $this->getProducts();
+        logger()->info('AFTER PRODUCTS', [
+            'ms' => round((microtime(true) - $start) * 1000, 2),
+        ]);
+
         return view('livewire.products.products-catalog', [
-            'items' => $this->getProducts(),
+            'items' => $products,
             'categories' => $this->getCategories(),
         ]);
     }
