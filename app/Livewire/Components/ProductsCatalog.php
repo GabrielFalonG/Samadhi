@@ -133,9 +133,9 @@ class ProductsCatalog extends Component
     public function render()
     {
         $start = microtime(true);
-        logger()->info('START PRODUCTS');
+        logger()->error('START PRODUCTS');
         $products = $this->getProducts();
-        logger()->info('AFTER PRODUCTS', [
+        logger()->error('AFTER PRODUCTS', [
             'ms' => round((microtime(true) - $start) * 1000, 2),
         ]);
 
