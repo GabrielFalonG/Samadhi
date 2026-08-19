@@ -47,7 +47,6 @@ class CarouselCreateAdmin extends Component
     public function save()
     {
         try {
-            $this->form->validate();
             $this->carouselService->create($this->form->toDto());
             $this->showConfirmModal = false;
             flashMessageSuccess('Carrusel creado correctamente.');

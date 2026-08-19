@@ -30,8 +30,6 @@
                 {{-- </div> --}}
             </main>
 
-            <livewire:components.carousel-item-modal />
-
             <livewire:components.cart-drawer />
 
             <livewire:components.footer />

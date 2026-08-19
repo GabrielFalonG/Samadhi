@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use Illuminate\Validation\Rule;
 use Livewire\Form;
 use App\DTOs\Carousel\SaveCarouselData;
 use App\DTOs\Carousel\CarouselItemData;
@@ -42,7 +43,7 @@ class CarouselForm extends Form
             'title'       => ['required', 'string', 'max:255'],
             'subtitle'    => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'section'     => ['required', 'string', 'max:100'],
+            'section'     => ['required', Rule::enum(CarouselSection::class)],
             'position'    => ['required', 'integer', 'min:1'],
             'active'      => ['required', 'boolean'],
 
@@ -74,8 +75,7 @@ class CarouselForm extends Form
 
             // Section
             'section.required' => 'La sección es obligatoria.',
-            'section.string'   => 'La sección debe ser un texto válido.',
-            'section.max'      => 'La sección no puede superar los 100 caracteres.',
+            'section.enum'     => 'La sección seleccionada no es válida.',
 
             // Position
             'position.required' => 'La posición es obligatoria.',

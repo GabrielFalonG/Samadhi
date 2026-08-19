@@ -65,7 +65,6 @@ class CarouselEditAdmin extends Component
     public function save()
     {
         try {
-            $this->form->validate();
             $this->carouselService->update($this->carousel, $this->form->toDto());
             $this->showConfirmModal = false;
             flashMessageSuccess('Carrusel actualizado correctamente.');

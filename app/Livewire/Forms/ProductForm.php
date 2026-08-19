@@ -4,7 +4,6 @@ namespace App\Livewire\Forms;
 
 use App\DTOs\Products\ProductSaveData;
 use App\Models\Product;
-use App\Services\Products\Contracts\ProductServiceInterface;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Form;
 use Livewire\Attributes\Validate;
@@ -42,9 +41,7 @@ class ProductForm extends Form
 
     public function toDto(): ProductSaveData
     {
-        $productService = app(ProductServiceInterface::class);
         $this->ingredients = implode(',', $this->selectedIngredients);
-
         return new ProductSaveData(
             productId: null,
             title: $this->title,
