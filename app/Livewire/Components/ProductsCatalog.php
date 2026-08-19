@@ -3,6 +3,7 @@
 namespace App\Livewire\Components;
 
 use App\DTOs\Products\ProductFilterData;
+use App\Concerns\InteractsWithCart;
 use App\Models\Category;
 use App\Services\Category\Contracts\CategoryServiceInterface;
 use App\Services\Products\Contracts\ProductServiceInterface;
@@ -13,7 +14,8 @@ use Livewire\WithPagination;
 
 class ProductsCatalog extends Component
 {
-    use WithPagination;
+    use WithPagination,
+        InteractsWithCart;
 
     protected string $paginationTheme = 'tailwind';
 

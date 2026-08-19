@@ -3,12 +3,15 @@
 namespace App\Livewire\Components;
 
 use App\DTOs\Carousel\CarouselFiltersData;
+use App\Concerns\InteractsWithCart;
 use App\Services\Carousel\Contracts\CarouselServiceInterface;
 use Exception;
 use Livewire\Component;
 
 class CarouselSection extends Component
 {
+    use InteractsWithCart;
+
     protected CarouselServiceInterface $carouselService;
 
     public function mount()

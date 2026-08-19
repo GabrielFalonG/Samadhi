@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Components;
 
+use App\Concerns\InteractsWithCart;
 use App\Models\Category;
 use App\Services\Favorite\Contracts\FavoriteServiceInterface;
 use App\Services\Category\Contracts\CategoryServiceInterface;
@@ -12,6 +13,8 @@ use Livewire\Component;
 
 class FavoritesPage extends Component
 {
+    use InteractsWithCart;
+
     protected FavoriteServiceInterface $favoriteService;
     protected CategoryServiceInterface $categoryService;
 
