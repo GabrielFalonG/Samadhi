@@ -102,11 +102,6 @@ class ProductsAdminEdit extends Component
         }
     }
 
-    private function resetForm(): void
-    {
-        $this->form->reset();
-    }
-
     public function render()
     {
         return view('livewire.products.products-admin-edit')

@@ -1,7 +1,6 @@
 {{-- Aquí continúa el formulario --}}
 <div class="mt-10 flex flex-col gap-4">
-    <form
-        wire:submit="confirmSaveData"
+    <form wire:submit="confirmSaveData"
         class="rounded-3xl
             border
             border-slate-200
@@ -11,20 +10,17 @@
             mb-8">
 
         {{-- Título --}}
-        <div
-            class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
             <div>
 
-                <h2
-                    class="text-2xl font-bold text-slate-900">
+                <h2 class="text-2xl font-bold text-slate-900">
 
                     {{ $isEditing ? 'Editar carrusel' : 'Crear nuevo carrusel' }}
 
                 </h2>
 
-                <p
-                    class="mt-1 text-slate-500">
+                <p class="mt-1 text-slate-500">
 
                     Configurá la información general del carrusel.
 
@@ -46,23 +42,18 @@
         </div>
 
         {{-- Campos --}}
-        <div
-            class="grid gap-6 lg:grid-cols-2">
+        <div class="grid gap-6 lg:grid-cols-2">
 
             {{-- Título --}}
             <div>
 
-                <label
-                    class="mb-2 block text-sm font-medium text-slate-600">
+                <label class="mb-2 block text-sm font-medium text-slate-600">
 
                     Título principal *
 
                 </label>
 
-                <input
-                    type="text"
-                    maxlength="120"
-                    wire:model.blur="form.title"
+                <input type="text" maxlength="120" wire:model.blur="form.title"
                     class="w-full rounded-2xl border px-4 py-3 outline-none transition
                         {{ $errors->has('form.title')
                             ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
@@ -77,17 +68,13 @@
             {{-- Subtítulo --}}
             <div>
 
-                <label
-                    class="mb-2 block text-sm font-medium text-slate-600">
+                <label class="mb-2 block text-sm font-medium text-slate-600">
 
                     Título pequeño
 
                 </label>
 
-                <input
-                    type="text"
-                    maxlength="120"
-                    wire:model.blur="form.subtitle"
+                <input type="text" maxlength="120" wire:model.blur="form.subtitle"
                     class="w-full rounded-2xl border px-4 py-3 outline-none transition
                         {{ $errors->has('form.subtitle')
                             ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
@@ -102,17 +89,13 @@
             {{-- Descripción --}}
             <div class="lg:col-span-2">
 
-                <label
-                    class="mb-2 block text-sm font-medium text-slate-600">
+                <label class="mb-2 block text-sm font-medium text-slate-600">
 
                     Descripción
 
                 </label>
 
-                <textarea
-                    rows="4"
-                    maxlength="300"
-                    wire:model.blur="form.description"
+                <textarea rows="4" maxlength="300" wire:model.blur="form.description"
                     class="w-full rounded-2xl border px-4 py-3 outline-none transition
                         {{ $errors->has('form.description')
                             ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
@@ -127,37 +110,23 @@
             {{-- Sección --}}
             <div>
 
-                <label
-                    class="mb-2 block text-sm font-medium text-slate-600">
+                <label class="mb-2 block text-sm font-medium text-slate-600">
 
                     Sección
 
                 </label>
 
-                <select
-                    wire:model.blur="form.section"
+                <select wire:model.blur="form.section"
                     class="w-full rounded-2xl border px-4 py-3 outline-none transition
                         {{ $errors->has('form.section')
                             ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
                             : 'border-slate-300 focus:border-violet-500 focus:ring-4 focus:ring-violet-100' }}">
 
-                    <option value="inicio">
-
-                        Inicio
-
-                    </option>
-
-                    <option value="productos">
-
-                        Productos
-
-                    </option>
-
-                    <option value="servicios">
-
-                        Servicios
-
-                    </option>
+                    @foreach ($form->sections() as $section)
+                        <option value="{{ $section['value'] }}">
+                            {{ $section['label'] }}
+                        </option>
+                    @endforeach
 
                 </select>
 
@@ -170,17 +139,13 @@
             {{-- Posición --}}
             <div>
 
-                <label
-                    class="mb-2 block text-sm font-medium text-slate-600">
+                <label class="mb-2 block text-sm font-medium text-slate-600">
 
                     Posición
 
                 </label>
 
-                <input
-                    type="number"
-                    min="1"
-                    wire:model.blur="form.position"
+                <input type="number" min="1" wire:model.blur="form.position"
                     class="w-full rounded-2xl border px-4 py-3 outline-none transition
                         {{ $errors->has('form.position')
                             ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
@@ -193,63 +158,24 @@
             </div>
 
             {{-- Productos --}}
-            <div class="mt-8">
-
-                <label class="mb-2 block text-sm font-medium text-slate-600">
-                    Agregar producto
-                </label>
-
-                <div class="flex gap-3">
-                    <div class="flex-1">
-                        <x-search-select
-                            label=""
-                            :options="collect($this->selectableProducts)"
-                            option-value="id"
-                            option-label="title"
-                            option-description="sku"
-                            option-image="image_url"
-                            :searchable="false"
-                            wire:model.live="selectedProduct"
-                        />
-                    </div>
-                </div>
-
-                @error('form.products')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-
-                <div class="mt-4 flex flex-wrap gap-3">
-                    @foreach($this->form->products as $product)
-                        {{-- CORRECCIÓN: Añadimos un wire:key único para blindar el renderizado de Livewire --}}
-                        <x-pill-product
-                            wire:key="pill-product-{{ $product['productId'] }}"
-                            :title="$product['title']"
-                            :image="$product['image_url']"
-                            :product-id="$product['productId']"
-                            wire:click="removeProduct({{ $product['productId'] }})"
-                        />
-                    @endforeach
+            <div class="flex gap-3">
+                <div class="flex-1">
+                    <x-multi-select label="Agregar producto" wire-model="form.products"
+                        :options="$this->form->getSelectableProducts($allProducts->toArray())"
+                        placeholder="Buscar producto..." :fixed-values="null" :allow-create="false" image-key="image" />
                 </div>
             </div>
         </div>
 
         {{-- Estado --}}
-        <div
-            class="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+        <div class="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
 
-            <label
-                class="flex items-center gap-4 cursor-pointer">
+            <label class="flex items-center gap-4 cursor-pointer">
 
                 <div class="flex items-center gap-3">
-                    <input
-                        type="checkbox"
-                        id="form_active"
-                        wire:model="form.active"
+                    <input type="checkbox" id="form_active" wire:model="form.active"
                         class="h-5 w-5 rounded border-slate-300 text-violet-600 transition focus:ring-2
-                            {{ $errors->has('form.active')
-                                ? 'border-red-500 focus:ring-red-500'
-                                : 'focus:ring-violet-500' }}"
-                    >
+                            {{ $errors->has('form.active') ? 'border-red-500 focus:ring-red-500' : 'focus:ring-violet-500' }}">
                     <label for="form_active" class="text-sm font-medium text-slate-700 select-none">
                         Carrusel activo
                     </label>
@@ -260,15 +186,13 @@
                 @enderror
                 <div>
 
-                    <p
-                        class="font-semibold text-slate-900">
+                    <p class="font-semibold text-slate-900">
 
                         Carrusel activo
 
                     </p>
 
-                    <p
-                        class="text-sm text-slate-500">
+                    <p class="text-sm text-slate-500">
 
                         Si está activo será visible en la aplicación.
 
@@ -281,8 +205,7 @@
         </div>
 
         {{-- Botones --}}
-        <div
-            class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
 
             <a href="{{ route('admin.carousels') }}" wire:navigate
                 class="rounded-2xl
@@ -299,19 +222,24 @@
 
             </a>
 
-            <button
-                type="submit"
-                class="rounded-2xl
-                    bg-violet-700
-                    hover:bg-violet-800
-                    px-6
-                    py-3
-                    text-white
-                    font-medium
-                    transition">
+            <button type="submit" wire:loading.attr="disabled" wire:target="confirmSaveData"
+                class="inline-flex items-center justify-center rounded-2xl bg-violet-700 px-6 py-3 font-medium text-white transition hover:bg-violet-800 disabled:opacity-70">
+                {{-- Estado normal --}}
+                <span wire:loading.remove wire:target="confirmSaveData">
+                    {{ $isEditing ? 'Actualizar carrusel' : 'Crear carrusel' }}
+                </span>
 
-                {{ $isEditing ? 'Actualizar carrusel' : 'Crear carrusel' }}
+                {{-- Estado procesando --}}
+                <span wire:loading.flex wire:target="confirmSaveData" class="items-center justify-center">
+                    <svg class="mr-2 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                    </svg>
 
+                    <span>Procesando...</span>
+                </span>
             </button>
 
         </div>

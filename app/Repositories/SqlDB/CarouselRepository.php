@@ -51,83 +51,95 @@ class CarouselRepository implements CarouseRepositoryInterface
 
     public function update(Carousel $carousel, SaveCarouselData $data): Carousel
     {
-        return DB::transaction(function () use ($carousel, $data) {
+        try {
+            return DB::transaction(function () use ($carousel, $data) {
 
-            /*
-            |--------------------------------------------------------------------------
-            | Actualizar cabecera
-            |--------------------------------------------------------------------------
-            */
+                /*
+                |--------------------------------------------------------------------------
+                | Actualizar cabecera
+                |--------------------------------------------------------------------------
+                */
 
-            $carousel->update([
-                'title' => $data->title,
-                'subtitle' => $data->subtitle,
-                'description' => $data->description,
-                'section' => $data->section,
-                'position' => $data->position,
-                'active' => $data->active,
-            ]);
-
-            /*
-            |--------------------------------------------------------------------------
-            | Reemplazar productos del carrusel
-            |--------------------------------------------------------------------------
-            */
-            $carousel->carouselItems()->delete();
-
-            foreach ($data->items as $index => $item) {
-                $carousel->carouselItems()->create([
-                    'product_id' => $item->productId,
-                    'position' => $index + 1,
+                $carousel->update([
+                    'title' => $data->title,
+                    'subtitle' => $data->subtitle,
+                    'description' => $data->description,
+                    'section' => $data->section,
+                    'position' => $data->position,
+                    'active' => $data->active,
                 ]);
-            }
 
-            return $carousel->fresh([
-                'carouselItems.product',
-            ]);
-        });
+                /*
+                |--------------------------------------------------------------------------
+                | Reemplazar productos del carrusel
+                |--------------------------------------------------------------------------
+                */
+                $carousel->carouselItems()->delete();
+
+                foreach ($data->items as $index => $item) {
+                    $carousel->carouselItems()->create([
+                        'product_id' => $item->productId,
+                        'position' => $index + 1,
+                    ]);
+                }
+
+                return $carousel->fresh([
+                    'carouselItems.product',
+                ]);
+            });
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     public function create(SaveCarouselData $data): Carousel
     {
-        return DB::transaction(function () use ($data) {
-            /*
-            |--------------------------------------------------------------------------
-            | Crear cabecera
-            |--------------------------------------------------------------------------
-            */
-            $carousel = Carousel::create([
-                'title' => $data->title,
-                'subtitle' => $data->subtitle,
-                'description' => $data->description,
-                'section' => $data->section,
-                'position' => $data->position,
-                'active' => $data->active,
-            ]);
-
-            /*
-            |--------------------------------------------------------------------------
-            | Agregar productos al carrusel
-            |--------------------------------------------------------------------------
-            */
-            foreach ($data->items as $index => $item) {
-                $carousel->carouselItems()->create([
-                    'product_id' => $item->productId,
-                    'position' => $index + 1,
+        try {
+            return DB::transaction(function () use ($data) {
+                /*
+                |--------------------------------------------------------------------------
+                | Crear cabecera
+                |--------------------------------------------------------------------------
+                */
+                $carousel = Carousel::create([
+                    'title' => $data->title,
+                    'subtitle' => $data->subtitle,
+                    'description' => $data->description,
+                    'section' => $data->section,
+                    'position' => $data->position,
+                    'active' => $data->active,
                 ]);
-            }
 
-            return $carousel->fresh([
-                'carouselItems.product',
-            ]);
-        });
+                /*
+                |--------------------------------------------------------------------------
+                | Agregar productos al carrusel
+                |--------------------------------------------------------------------------
+                */
+                foreach ($data->items as $index => $item) {
+                    $carousel->carouselItems()->create([
+                        'product_id' => $item->productId,
+                        'position' => $index + 1,
+                    ]);
+                }
+
+                return $carousel->fresh([
+                    'carouselItems.product',
+                ]);
+            });
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     public function delete(Carousel $carousel): bool
     {
-        return DB::transaction(function () use ($carousel) {
-            // $carousel->carouselItems()->delete();
-            return $carousel->delete();
-        });
+        try {
+            return DB::transaction(function () use ($carousel) {
+                // $carousel->carouselItems()->delete();
+                return $carousel->delete();
+            });
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }

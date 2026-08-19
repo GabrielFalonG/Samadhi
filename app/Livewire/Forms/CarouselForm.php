@@ -5,6 +5,8 @@ namespace App\Livewire\Forms;
 use Livewire\Form;
 use App\DTOs\Carousel\SaveCarouselData;
 use App\DTOs\Carousel\CarouselItemData;
+use App\Enums\CarouselSection;
+use App\Models\Carousel;
 
 class CarouselForm extends Form
 {
@@ -16,6 +18,22 @@ class CarouselForm extends Form
     public int $position = 1;
     public bool $active = true;
     public array $products = [];
+
+    public function setCarousel(Carousel $carousel): void
+    {
+        $this->editingId = $carousel->id;
+        $this->title = $carousel->title;
+        $this->subtitle = $carousel->subtitle ?? '';
+        $this->description = $carousel->description ?? '';
+        $this->section = $carousel->section;
+        $this->position = $carousel->position;
+        $this->active = (bool) $carousel->active;
+
+        $this->products = $carousel->products->pluck('id')
+                                            ->map(fn ($id) => (int) $id)
+                                            ->values()
+                                            ->all();
+    }
 
     public function rules(): array
     {
@@ -29,13 +47,8 @@ class CarouselForm extends Form
             'active'      => ['required', 'boolean'],
 
             // Validaciones para los items/productos
-            'products'               => ['required', 'array', 'min:1', 'max:5'],
-            'products.*.productId'   => ['required', 'integer', 'exists:products,id'],
-            'products.*.position'    => ['nullable', 'integer', 'min:1'], // <-- Cambiado a nullable
-            'products.*.title'       => ['required', 'string', 'max:255'],
-            'products.*.description' => ['nullable', 'string', 'max:500'],
-            'products.*.image_url'   => ['required', 'string'],
-            'products.*.link_url'    => ['nullable', 'string'],
+            'products' => ['required', 'array', 'min:1', 'max:5'],
+            'products.*' => ['required', 'integer', 'exists:products,id'],
         ];
     }
 
@@ -74,9 +87,14 @@ class CarouselForm extends Form
             'active.boolean'  => 'El estado debe ser verdadero o falso.',
 
             //Products
-            'products.required' => 'Debes agregar al menos un producto al carrusel.',
-            'products.min'      => 'Debes agregar al menos un producto al carrusel.',
-            'products.max'      => 'No puedes agregar más de 5 productos a este carrusel.',
+            'products.required' => 'Debes seleccionar al menos un producto.',
+            'products.array'    => 'Los productos seleccionados no tienen un formato válido.',
+            'products.min'      => 'Debes seleccionar al menos un producto.',
+            'products.max'      => 'Puedes seleccionar como máximo 5 productos.',
+
+            'products.*.required' => 'El producto seleccionado es obligatorio.',
+            'products.*.integer'  => 'El producto seleccionado no es válido.',
+            'products.*.exists'   => 'Uno de los productos seleccionados no existe.',
         ];
     }
 
@@ -86,13 +104,11 @@ class CarouselForm extends Form
     public function validationAttributes(): array
     {
         return [
-            'title'                => 'título del carrusel',
-            'section'              => 'sección',
-            'position'             => 'posición del carrusel',
-            'products.*.productId' => 'ID del producto',
-            'products.*.position'  => 'posición del producto',
-            'products.*.title'     => 'título del producto',
-            'products.*.image_url' => 'imagen del producto',
+            'title'    => 'título del carrusel',
+            'section'  => 'sección',
+            'position' => 'posición del carrusel',
+            'products' => 'productos',
+            'products.*' => 'producto',
         ];
     }
 
@@ -107,17 +123,35 @@ class CarouselForm extends Form
             position: $this->position,
             active: $this->active,
             items: collect($this->products)
-                ->map(fn ($product, $index) => new CarouselItemData(
-                    productId: (int) $product['productId'],
-                    position: (int) ($product['position'] ?? $index + 1),
-                    title: $product['title'],
-                    description: $product['description'] ?? '',
-                    imageUrl: $product['image_url'],
-                    linkUrl: $product['link_url'] ?? '',
-                    price: (float) ($product['price'] ?? 0.0),
-                    ingredients: $product['ingredients'] ?? '',
-                ))
-                ->all(),
+                    ->values()
+                    ->map(fn ($productId, $index) => new CarouselItemData(
+                        productId: (int) $productId,
+                        position: $index + 1,
+                    ))
+                    ->all(),
+        );
+    }
+
+    public function sections(): array
+    {
+        return array_map(
+            fn (CarouselSection $section) => [
+                'value' => $section->value,
+                'label' => $section->label(),
+            ],
+            CarouselSection::cases()
+        );
+    }
+
+    public function getSelectableProducts(array $products): array
+    {
+        return array_map(
+            fn(array $item) => [
+                'id' => $item['id'],
+                'name' => $item['title'],
+                'image' => $item['image_url'] ?? null,
+            ],
+            $products
         );
     }
 }

@@ -59,6 +59,45 @@ class ProductRepository implements ProductRepositoryInterface
         ->paginate($filters->perPage);
     }
 
+    // public function paginated(ProductFilterData $filters): LengthAwarePaginator
+    // {
+    //     $start = microtime(true);
+
+    //     logger()->error('PAGINATED START');
+
+    //     $query = Product::query();
+
+    //     logger()->error('QUERY CREATED', [
+    //         'ms' => round((microtime(true) - $start) * 1000, 2),
+    //     ]);
+
+    //     $query
+    //         ->with('categories')
+    //         ->when($filters->categories, function ($query, $category) {
+    //             $query->whereHas('categories', function ($q) use ($category) {
+    //                 $q->whereIn('categories.id', $category);
+    //             });
+    //         }, function ($query) {
+    //             $query->whereHas('categories', function ($q) {
+    //                 $q->where('categories.id', \App\Models\Category::DEFAULT_ID);
+    //             });
+    //         })
+    //         // resto de tus filtros...
+    //         ->orderBy($filters->sortBy, $filters->sortDirection);
+
+    //     logger()->error('QUERY BUILT', [
+    //         'ms' => round((microtime(true) - $start) * 1000, 2),
+    //     ]);
+
+    //     $result = $query->paginate($filters->perPage);
+
+    //     logger()->error('PAGINATE FINISHED', [
+    //         'ms' => round((microtime(true) - $start) * 1000, 2),
+    //     ]);
+
+    //     return $result;
+    // }
+
     public function getAllProducts(): Collection
     {
         return Product::all();

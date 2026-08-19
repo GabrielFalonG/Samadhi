@@ -71,11 +71,44 @@
             <button
                 wire:click="save"
                 wire:loading.attr="disabled"
+                wire:target="save"
                 type="button"
-                class="inline-flex items-center justify-center rounded-2xl bg-violet-600 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-violet-700 disabled:opacity-50">
+                class="inline-flex items-center justify-center rounded-2xl bg-violet-600 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-violet-700 disabled:opacity-50"
+            >
+                {{-- Estado normal --}}
+                <span wire:loading.remove wire:target="save">
+                    Actualizar
+                </span>
 
-                <span wire:loading.remove>Actualizar</span>
-                <span wire:loading>Guardando...</span>
+                {{-- Estado procesando --}}
+                <span
+                    wire:loading.flex
+                    wire:target="save"
+                    class="items-center justify-center"
+                >
+                    <svg
+                        class="mr-2 h-5 w-5 animate-spin"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                        />
+                        <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        />
+                    </svg>
+
+                    <span>Procesando...</span>
+                </span>
             </button>
 
         </div>

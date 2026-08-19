@@ -17,8 +17,6 @@ class CarouselCreateAdmin extends Component
     public CarouselForm $form;
 
     // Listado reactivo de ítems vinculados al formulario
-    public ?int $selectedProduct = null;
-    public array $selectableProducts = [];
     public ?Collection $allProducts = null;
 
     //Modal
@@ -26,7 +24,6 @@ class CarouselCreateAdmin extends Component
 
     public function mount()
     {
-        $this->selectableProducts = $this->getSelectableProducts($this->form->products);
         $this->allProducts = $this->productService->getAllProducts();
     }
 
@@ -34,70 +31,6 @@ class CarouselCreateAdmin extends Component
     {
         $this->carouselService = $carouselService;
         $this->productService = $productService;
-    }
-
-    public function removeItem(int $index)
-    {
-        if (count($this->form->products) > 1) {
-            unset($this->form->products[$index]);
-            $this->form->products = array_values($this->form->products); // Reindexar el array
-        }
-    }
-
-
-    public function getSelectableProducts(array $associatedProducts): array
-    {
-        $ids = collect($associatedProducts)->pluck('productId');
-        return $this->productService->getSelectableProducts($ids->toArray());
-    }
-
-    public function updatedSelectedProduct(?int $productId): void
-    {
-        try {
-            $product = $this->allProducts?->firstWhere('id', $productId);
-
-            if ($product) {
-                $this->form->products[] = [
-                    'productId' => $product['id'],
-                    'title' => $product['title'],
-                    'description' => $product['description'] ?? '',
-                    'image_url' => $product['image_url'],
-                    'link_url' => $product['link_url'] ?? '',
-                    'price' => $product['price'] ?? 0.0,
-                    'ingredients' => $product['ingredients'] ?? '',
-                ];
-
-                $this->selectableProducts = array_values($this->getSelectableProducts($this->form->products));
-                $this->selectedProduct = null;
-            }
-
-            $this->form->validateOnly('products');
-        } catch (ValidationException $e) {
-            flashMessageError('Hay errores en el formulario, revisá los campos.');
-            throw $e;
-        } catch (\Exception $e) {
-            report($e);
-            flashMessageError('Ocurrió un error al actualizar los productos');
-        }
-    }
-
-    public function removeProduct(int $id)
-    {
-        try {
-            $this->form->products = collect($this->form->products)
-                            ->reject(fn ($product) => $product['productId'] === $id)
-                            ->all();
-
-            $this->form->products = array_values($this->form->products); // Reindexar el array
-            $this->selectableProducts = array_values($this->getSelectableProducts($this->form->products));
-            $this->form->validateOnly('products');
-        } catch (ValidationException $e) {
-            flashMessageError('Hay errores en el formulario, revisá los campos.');
-            throw $e;
-        } catch (\Exception $e) {
-            report($e);
-            flashMessageError('Ocurrió un error al actualizar los productos');
-        }
     }
 
     public function confirmSaveData(): void
@@ -114,9 +47,11 @@ class CarouselCreateAdmin extends Component
     public function save()
     {
         try {
+            $this->form->validate();
             $this->carouselService->create($this->form->toDto());
-            $this->resetForm();
+            $this->showConfirmModal = false;
             flashMessageSuccess('Carrusel creado correctamente.');
+            $this->redirectRoute('admin.carousels', navigate: true);
         } catch (ValidationException $e) {
             flashMessageError('Hay errores en el formulario, revisá los campos.');
             throw $e;
@@ -129,6 +64,6 @@ class CarouselCreateAdmin extends Component
     public function render()
     {
         return view('livewire.carousel.carousel-create-admin')
-                ->layout('components.layouts.admin');
+            ->layout('components.layouts.admin');
     }
 }
