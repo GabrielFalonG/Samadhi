@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Components;
 
-use App\Models\Product;
 use App\Services\Favorite\Contracts\FavoriteServiceInterface;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\On;

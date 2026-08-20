@@ -145,53 +145,43 @@
             <!-- GRID DE PRODUCTOS -->
             <main class="lg:col-span-3">
 
+                {{-- Encabezado de la categoría --}}
+                <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between lg:gap-8">
 
-                <!-- Encabezado Desktop -->
-                <div class="mb-6 hidden items-center justify-between gap-8 lg:flex">
+                    {{-- Información de la categoría --}}
+                    <div class="min-w-0 flex-1">
 
-                    <!-- Input de Búsqueda -->
-                    <div class="relative flex-1">
+                        {{-- Nombre de la categoría --}}
+                        <h1 class="font-serif text-4xl leading-tight text-stone-900 md:text-5xl">
+                            {{ $categoryObj?->name ?? 'Todos los productos' }}
+                        </h1>
 
-                        <span
-                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-stone-400">
+                        {{-- Descripción --}}
+                        @if ($categoryObj?->description)
 
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                            <p class="mt-4 max-w-3xl text-base leading-7 text-stone-600 md:text-lg md:leading-8">
+                                {{ $categoryObj->description }}
+                            </p>
 
-                        </span>
+                        @else
 
+                            <p class="mt-4 max-w-3xl text-base leading-7 text-stone-600 md:text-lg md:leading-8">
+                                Explorá nuestra colección de productos diseñados para acompañar
+                                tu bienestar y conectar con tu energía cada día.
+                            </p>
 
-                        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Buscar productos..."
-                            class="w-full rounded-full border border-stone-300/80 bg-white py-1.5 pl-9 pr-8 text-xs text-stone-700 placeholder-stone-400 shadow-xs transition-all focus:border-[#B89B6A] focus:outline-none focus:ring-1 focus:ring-[#B89B6A]">
-
-
-                        <!-- Botón Limpiar -->
-                        <button x-show="$wire.search" wire:click="$set('search', '')" type="button"
-                            class="absolute inset-y-0 right-0 flex items-center pr-2.5 text-stone-400 hover:text-stone-600">
-
-                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-
-                        </button>
+                        @endif
 
                     </div>
 
 
-                    <!-- Contador -->
-                    <p class="shrink-0 whitespace-nowrap text-sm text-stone-500">
-
+                    {{-- Contador --}}
+                    <p class="shrink-0 text-sm leading-6 text-stone-500 lg:pb-1">
                         Se encontraron
-
                         <span class="font-semibold text-stone-800">
                             {{ $items->total() }}
                         </span>
-
                         productos
-
                     </p>
 
                 </div>
@@ -323,13 +313,10 @@
 
 
                             {{-- Ingredientes --}}
-                            <div
-                                x-show="productModal.product?.ingredients"
-                                class="mt-6 pt-4 border-t border-dashed border-stone-200"
-                            >
+                            <div x-show="productModal.product?.ingredients"
+                                class="mt-6 pt-4 border-t border-dashed border-stone-200">
                                 <span
-                                    class="block text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-400 mb-2"
-                                >
+                                    class="block text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-400 mb-2">
                                     Ingredientes Principales
                                 </span>
 
@@ -340,12 +327,9 @@
                                             .split(',')
                                             .map(i => i.trim())
                                             .filter(Boolean)"
-                                        :key="ingredient"
-                                    >
-                                        <span
-                                            x-text="ingredient"
-                                            class="rounded-full bg-[#F3EFEA] px-4 py-1.5 text-xs text-stone-700"
-                                        ></span>
+                                        :key="ingredient">
+                                        <span x-text="ingredient"
+                                            class="rounded-full bg-[#F3EFEA] px-4 py-1.5 text-xs text-stone-700"></span>
                                     </template>
 
                                 </div>

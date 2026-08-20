@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Services\Category\Contracts\CategoryServiceInterface;
 use App\Services\Products\Contracts\ProductServiceInterface;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -74,6 +75,12 @@ class ProductsCatalog extends Component
         ]);
 
         $this->resetPage();
+    }
+
+    #[On('search-products')]
+    public function updateSearch(string $search): void
+    {
+        $this->search = $search;
     }
 
     public function updatedCategory(string $value)

@@ -51,36 +51,4 @@
         </button>
 
     </div>
-
-    <div class="flex mt-3">
-
-        <!-- Zona 1: Scroll horizontal de selects / accesos rápidos -->
-        <!-- Buscador tomará todo el espacio sobrante -->
-        <div class="relative flex-1">
-            <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-stone-400">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-            </span>
-
-            <input
-                type="text"
-                wire:model.live.debounce.500ms="search"
-                placeholder="Buscar productos..."
-                class="w-full rounded-full border border-stone-200 bg-white py-2 pl-10 pr-8 text-xs font-medium text-stone-700 shadow-xs transition-colors placeholder-stone-400 focus:border-[#A98B68] focus:outline-none focus:ring-1 focus:ring-[#A98B68]"
-            />
-
-            @if($search)
-                <button
-                    wire:click="$set('search', '')"
-                    type="button"
-                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-stone-400 hover:text-stone-600">
-                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            @endif
-        </div>
-
-    </div>
 </div>
