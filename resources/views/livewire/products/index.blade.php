@@ -107,9 +107,7 @@
 
     <section id="colecciones">
 
-        <livewire:components.carousel-section
-            wire:key="carousel-component-{{ time() }}"
-        />
+        <livewire:components.carousel-section />
 
     </section>
 </div>

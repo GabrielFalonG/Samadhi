@@ -19,7 +19,10 @@
 
         document.body.classList.remove('overflow-hidden');
     }
-}" @keydown.escape.window="closeProduct()">
+}"
+@keydown.escape.window="closeProduct()"
+@product-modal:close.window="closeProduct()"
+>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 

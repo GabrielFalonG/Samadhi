@@ -19,7 +19,10 @@
 
         document.body.classList.remove('overflow-hidden');
     }
-}" @keydown.escape.window="closeProduct()">
+}"
+@keydown.escape.window="closeProduct()"
+@product-modal:close.window="closeProduct()"
+>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         <!-- COMPONENTE MOBILE FILTERS (Solo visible en mobile) -->

@@ -19,7 +19,10 @@
 
         document.body.classList.remove('overflow-hidden');
     }
-}" @keydown.escape.window="closeProduct()">
+}"
+@keydown.escape.window="closeProduct()"
+@product-modal:close.window="closeProduct()"
+>
 
     @foreach ($carousels as $carousel)
         <section wire:key="carousel-{{ $carousel['id'] }}" class="page-section relative" x-data="{
@@ -191,7 +194,7 @@
 
                 <div class="relative overflow-hidden w-full px-1 py-2">
 
-                    <div x-ref="track" wire:replace.self class="flex gap-4 transition-transform duration-500 ease-out">
+                    <div x-ref="track" class="flex gap-4 transition-transform duration-500 ease-out">
 
                         @foreach ($carousel['products'] as $item)
                             <article wire:key="item-{{ $item['id'] }}"

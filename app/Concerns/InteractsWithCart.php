@@ -37,6 +37,7 @@ trait InteractsWithCart
 
             $userId = auth()->check() ? auth()->id() : null;
             $cartService->add($item, $userId);
+            $this->dispatch('product-modal:close');
             $this->dispatch('cart:updated');
 
         } catch (Exception $e) {
