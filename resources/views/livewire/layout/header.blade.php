@@ -43,7 +43,7 @@ new class extends Component /** * Log the current user out of the application. *
         <div class="flex items-center justify-between gap-6 py-4 lg:py-5">
 
             {{-- Logo --}}
-            <a href="{{ route('home') }}" wire:navigate class="flex shrink-0 items-center">
+            <a href="{{ route('home') }}" class="flex shrink-0 items-center">
                 <x-application-logo />
             </a>
 
@@ -51,7 +51,7 @@ new class extends Component /** * Log the current user out of the application. *
             <div
                 @class([
                     'hidden' => !$showSearch,
-                    'flex-1 justify-center lg:flex lg:-translate-x-20' => $showSearch,
+                    'flex-1 justify-center lg:flex' => $showSearch,
                 ])>
                 @include('livewire.layout.searcher')
             </div>
