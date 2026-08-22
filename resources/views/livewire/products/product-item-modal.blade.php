@@ -43,11 +43,6 @@
 
                     <div>
 
-                        {{-- Categoría --}}
-                        <span class="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#B5956E]"
-                            x-text="productModal.product?.category ?? 'Spray Áurico'"></span>
-
-
                         {{-- Título --}}
                         <h2 class="mt-1 text-3xl sm:text-4xl font-normal text-stone-800"
                             x-text="productModal.product?.name ?? productModal.product?.title"></h2>
@@ -59,21 +54,18 @@
 
 
                         {{-- Separador --}}
-                        <div class="relative my-6 text-center">
-
+                        <div x-show="productModal.product?.long_description || productModal.product?.ingredients"
+                            class="relative my-6 text-center">
                             <div class="absolute inset-0 flex items-center">
                                 <div class="w-full border-t border-stone-200/70"></div>
                             </div>
 
                             <div class="relative inline-block bg-[#FAF8F5] px-3 text-[#B5956E]">
-
                                 <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24">
                                     <path
-                                        d="M12 3c-1.5 3-4 5.5-7 6.5 2.5 1.5 5.5 1.5 7 0 1.5 1.5 4.5 1.5 7 0-3-1-5.5-3.5-7-6.5zm0 8c-2.5 2-6 3-9 3 3 2 6.5 2.5 9 5 2.5-2.5 6-3 9-5-3 0-6.5-1-9-3z" />
+                                        d="M12 3c-1.5 3-4 5.5-7 6.5 2.5 1.5 5.5 1.5 7 0 1.5 1.5 4.5 1.5 7 0-3-1-5.5-3.5-7-6.5zm0 8c-2.5 2-6 3-9 3 3 2 6.5 2.5 9 5 2.5-2.5 6-3-9-5 3 0 6.5-1 9-3z" />
                                 </svg>
-
                             </div>
-
                         </div>
 
 
@@ -126,18 +118,37 @@
                                     ">
                             </p>
 
-
+                            {{-- Agregar al carrito --}}
                             <button type="button" @click="$wire.addToCart(productModal.product.id)"
-                                class="inline-flex items-center justify-center gap-2 rounded-full bg-[#A98B68] px-6 py-3.5 text-xs font-medium text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#8D7358] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#A98B68]/50">
+                                wire:loading.attr="disabled" wire:target="addToCart"
+                                class="flex min-h-[52px] w-1/2 items-center justify-center gap-2 rounded-full bg-[#A98B68] px-4 text-xs font-medium text-white shadow-sm transition-all duration-200 hover:bg-[#8D7358] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70">
 
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
+                                {{-- Estado normal --}}
+                                <span wire:loading.remove wire:target="addToCart"
+                                    class="flex items-center justify-center gap-2">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.8">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
 
-                                <span>
-                                    Agregar al carrito
+                                    <span>Agregar al carrito</span>
+                                </span>
+
+
+                                {{-- Spinner --}}
+                                <span wire:loading.flex wire:target="addToCart"
+                                    class="items-center justify-center gap-2 whitespace-nowrap">
+                                    <svg class="h-5 w-5 shrink-0 animate-spin text-white" fill="none"
+                                        viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                            stroke="currentColor" stroke-width="3"></circle>
+
+                                        <path class="opacity-90" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"></path>
+                                    </svg>
+
+                                    <span>Agregando...</span>
                                 </span>
 
                             </button>

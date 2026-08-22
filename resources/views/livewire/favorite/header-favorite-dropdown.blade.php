@@ -96,8 +96,16 @@
                             wire:click="removeFavorite({{ $product->id }})"
                             aria-label="Quitar de favoritos"
                             class="text-stone-400 hover:text-red-500 transition p-1.5 rounded-md hover:bg-stone-50">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="1.8">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6 7h12M9 7V5h6v2m-8 0 .7 13h8.6L17 7M10 11v5m4-5v5" />
                         </svg>
                     </button>
                 </div>

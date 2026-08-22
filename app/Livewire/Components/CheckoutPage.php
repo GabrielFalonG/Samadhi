@@ -15,13 +15,11 @@ class CheckoutPage extends Component
     protected OrderServiceInterface $orderService;
     protected CartServiceInterface $cartService;
 
+    public bool $orderConfirmed = false;
+    public ?string $confirmedOrderNumber = null;
+
     public OrderForm $form;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Inicialización
-    |--------------------------------------------------------------------------
-    */
     public function mount(): void
     {
         $this->loadCart();
@@ -30,17 +28,11 @@ class CheckoutPage extends Component
     public function boot(
         OrderServiceInterface $orderService,
         CartServiceInterface $cartService,
-    ): void
-    {
+    ): void {
         $this->orderService = $orderService;
         $this->cartService = $cartService;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Helpers
-    |--------------------------------------------------------------------------
-    */
     public function loadCart(): void
     {
         $this->form->items = $this->cartService->items();
@@ -60,13 +52,15 @@ class CheckoutPage extends Component
 
     public function confirmOrder(): void
     {
-
         try {
             $this->form->validate();
             $order = $this->orderService->create($this->form->toDto());
+            $this->confirmedOrderNumber = $order->orderNumber;
+            $this->orderConfirmed = true;
             $this->cartService->clear();
             $this->dispatch('cart:finished');
-            // $this->orderService->notifyme($order);
+            $this->dispatch('order:confirmed');
+            $this->orderService->notifyme($order);
             $this->form->reset();
         } catch (ValidationException $e) {
             flashMessageError('Hay errores en el formulario, revisá los campos.');

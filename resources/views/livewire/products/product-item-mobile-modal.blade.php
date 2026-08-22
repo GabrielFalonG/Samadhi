@@ -52,7 +52,7 @@
                         <div class="aspect-[4/3] w-full">
                             <img :src="productModal.product?.image_url"
                                 :alt="productModal.product?.name ?? productModal.product?.title ?? ''"
-                                class="h-full w-full object-cover object-center">
+                                class="h-full w-full object-contain object-center">
                         </div>
                     </div>
 
@@ -76,7 +76,8 @@
 
 
                         {{-- Separador --}}
-                        <div class="relative my-7 flex items-center justify-center">
+                        <div x-show="productModal.product?.long_description || productModal.product?.ingredients"
+                            class="relative my-7 flex items-center justify-center">
 
                             <div class="absolute inset-x-0 border-t border-stone-200"></div>
 

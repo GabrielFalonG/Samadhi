@@ -4,7 +4,6 @@ use App\Services\Category\CategoryService;
 use Livewire\Volt\Component;
 
 new class extends Component /** * Log the current user out of the application. */ {
-
     public string $search = '';
     public bool $showSearch = false;
 
@@ -48,11 +47,10 @@ new class extends Component /** * Log the current user out of the application. *
             </a>
 
             {{-- Buscador se oculta en modo mobile --}}
-            <div
-                @class([
-                    'hidden' => !$showSearch,
-                    'flex-1 justify-center lg:flex' => $showSearch,
-                ])>
+            <div @class([
+                'hidden' => !$showSearch,
+                'flex-1 justify-center lg:flex' => $showSearch,
+            ])>
                 @include('livewire.layout.searcher')
             </div>
 
@@ -183,11 +181,10 @@ new class extends Component /** * Log the current user out of the application. *
         </div>
 
         {{-- Buscador se oculta en modo desktop --}}
-        <div
-            @class([
-                'hidden' => !$showSearch,
-                'lg:hidden' => $showSearch,
-            ])>
+        <div @class([
+            'hidden' => !$showSearch,
+            'lg:hidden' => $showSearch,
+        ])>
             @include('livewire.layout.searcher-mobile')
         </div>
 
@@ -195,7 +192,7 @@ new class extends Component /** * Log the current user out of the application. *
 
     {{-- Bottom Navigation Links --}}
     @unless (request()->routeIs('category'))
-        <div class="border-t border-stone-200/60">
+        <div @class(['border-t border-stone-200/60', 'hidden' => $showSearch])>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <nav class="flex items-center gap-8 py-3 text-xs font-medium text-stone-600 overflow-x-auto no-scrollbar">
 
