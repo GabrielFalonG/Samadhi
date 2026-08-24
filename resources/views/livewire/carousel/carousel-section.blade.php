@@ -151,18 +151,20 @@
             @if (!empty($carousel['title']))
                 <div class="mx-auto max-w-4xl text-center">
 
-                    <span class="text-sm uppercase tracking-[0.35em] text-[#A98B68]">
-                        {{ $carousel['subtitle'] }}
-                    </span>
-
                     @if (!empty($carousel['subtitle']))
-                        <h2 class="mt-4 font-serif text-5xl text-stone-800">
+                        <h2 class="font-serif text-5xl text-stone-800">
                             {{ $carousel['title'] }}
                         </h2>
                     @endif
 
+                    <div class="mt-6">
+                        <span class="text-sm uppercase tracking-[0.35em] text-[#A98B68]">
+                            {{ $carousel['subtitle'] }}
+                        </span>
+                    </div>
+
                     @if (!empty($carousel['description']))
-                        <p class="mx-auto mt-8 max-w-3xl text-lg leading-9 text-stone-600">
+                        <p class="mx-auto mt-2 max-w-3xl text-lg leading-9 text-stone-600">
                             {{ $carousel['description'] }}
                         </p>
                     @endif
@@ -194,7 +196,7 @@
 
                 <div class="relative overflow-hidden w-full px-1 py-2">
 
-                    <div x-ref="track" class="flex gap-4 transition-transform duration-500 ease-out">
+                    <div x-ref="track" class="mt-6 flex gap-4 transition-transform duration-500 ease-out">
 
                         @foreach ($carousel['products'] as $item)
                             <article wire:key="item-{{ $item['id'] }}"
