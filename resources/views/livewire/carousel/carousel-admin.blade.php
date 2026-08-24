@@ -2,8 +2,7 @@
 
     <div class="p-5 lg:p-10">
         {{-- Header --}}
-        <div
-            class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between mb-8">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between mb-8">
 
             <div>
 
@@ -21,10 +20,9 @@
 
             </div>
 
-            <a href="{{ route('admin.carousels.create') }}"
-                wire:navigate
+            <a href="{{ route('admin.carousels.create') }}" wire:navigate
                 class="w-full lg:w-auto inline-flex items-center justify-center rounded-2xl bg-violet-700 hover:bg-violet-800 px-6 py-3 text-white font-medium transition">
-                    Nuevo carrusel
+                Nuevo carrusel
             </a>
 
         </div>
@@ -108,14 +106,12 @@
                    shadow-sm
                    mb-8">
 
-            <div
-                class="flex flex-col xl:flex-row gap-4 xl:items-end">
+            <div class="flex flex-col xl:flex-row gap-4 xl:items-end">
 
                 {{-- Buscar --}}
                 <div class="flex-1">
 
-                    <label
-                        class="mb-2 block text-sm font-medium text-slate-600">
+                    <label class="mb-2 block text-sm font-medium text-slate-600">
 
                         Buscar
 
@@ -123,25 +119,16 @@
 
                     <div class="relative">
 
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
 
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="m21 21-4.35-4.35m1.35-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m21 21-4.35-4.35m1.35-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
 
                         </svg>
 
-                        <input
-                            type="text"
-                            wire:model.live.debounce.500ms="search"
-                            placeholder="Buscar por título..."
+                        <input type="text" wire:model.live.debounce.500ms="search" placeholder="Buscar por título..."
                             class="w-full rounded-2xl
                                    border
                                    border-slate-300
@@ -162,15 +149,13 @@
                 {{-- Sección --}}
                 <div class="w-full sm:w-60">
 
-                    <label
-                        class="mb-2 block text-sm font-medium text-slate-600">
+                    <label class="mb-2 block text-sm font-medium text-slate-600">
 
                         Sección
 
                     </label>
 
-                    <select
-                        wire:model.live="section"
+                    <select wire:model.live="section"
                         class="w-full rounded-2xl
                                border
                                border-slate-300
@@ -208,15 +193,13 @@
                 {{-- Estado --}}
                 <div class="w-full sm:w-60">
 
-                    <label
-                        class="mb-2 block text-sm font-medium text-slate-600">
+                    <label class="mb-2 block text-sm font-medium text-slate-600">
 
                         Estado
 
                     </label>
 
-                    <select
-                        wire:model.live="active"
+                    <select wire:model.live="active"
                         class="w-full rounded-2xl
                                border
                                border-slate-300
@@ -263,8 +246,7 @@
                 overflow-hidden">
 
             {{-- Cabecera --}}
-            <div
-                class="border-b border-slate-200 px-6 py-5">
+            <div class="border-b border-slate-200 px-6 py-5">
 
                 <div class="flex items-center justify-between">
 
@@ -297,37 +279,43 @@
 
                         <tr>
 
-                            <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th
+                                class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
 
                                 Posición
 
                             </th>
 
-                            <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th
+                                class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
 
                                 Carrusel
 
                             </th>
 
-                            <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th
+                                class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
 
                                 Sección
 
                             </th>
 
-                            <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th
+                                class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">
 
                                 Productos
 
                             </th>
 
-                            <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th
+                                class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">
 
                                 Estado
 
                             </th>
 
-                            <th class="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th
+                                class="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
 
                                 Acciones
 
@@ -340,10 +328,7 @@
                     <tbody class="divide-y divide-slate-100">
 
                         @forelse($this->carousels as $row)
-
-                            <tr
-                                wire:key="carousel-{{ $row->id }}"
-                                class="hover:bg-slate-50 transition">
+                            <tr wire:key="carousel-{{ $row->id }}" class="hover:bg-slate-50 transition">
 
                                 <td class="px-6 py-5">
 
@@ -366,14 +351,12 @@
 
                                         </p>
 
-                                        @if($row->subtitle)
-
+                                        @if ($row->subtitle)
                                             <p class="mt-1 text-sm text-slate-500">
 
                                                 {{ $row->subtitle }}
 
                                             </p>
-
                                         @endif
 
                                     </div>
@@ -393,8 +376,7 @@
 
                                 <td class="px-6 py-5 text-center">
 
-                                    <span
-                                        class="text-lg font-semibold text-slate-800">
+                                    <span class="text-lg font-semibold text-slate-800">
 
                                         {{ $row->products->count() }}
 
@@ -410,24 +392,20 @@
 
                                 <td class="px-6 py-5 text-center">
 
-                                    @if($row->active)
-
+                                    @if ($row->active)
                                         <span
                                             class="inline-flex rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
 
                                             Activo
 
                                         </span>
-
                                     @else
-
                                         <span
                                             class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600">
 
                                             Inactivo
 
                                         </span>
-
                                     @endif
 
                                 </td>
@@ -436,15 +414,12 @@
 
                                     <div class="flex justify-end gap-2">
 
-                                        <a
-                                            href="{{ route('admin.carousels.edit', $row->id) }}"
-                                            class="inline-flex rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-                                        >
+                                        <a href="{{ route('admin.carousels.edit', $row->id) }}"
+                                            class="inline-flex rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
                                             Editar
                                         </a>
 
-                                        <button
-                                            wire:click="confirmDelete({{ $row->id }})"
+                                        <button wire:click="confirmDelete({{ $row->id }})"
                                             class="rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50">
 
                                             Eliminar
@@ -489,7 +464,6 @@
                                 </td>
 
                             </tr>
-
                         @endforelse
 
                     </tbody>
@@ -504,13 +478,9 @@
         <div class="lg:hidden divide-y divide-slate-200">
 
             @forelse($this->carousels as $row)
+                <div wire:key="carousel-mobile-{{ $row->id }}" class="p-5">
 
-                <div
-                    wire:key="carousel-mobile-{{ $row->id }}"
-                    class="p-5">
-
-                    <div
-                        class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
 
                         {{-- Header --}}
                         <div class="flex items-start justify-between">
@@ -528,22 +498,18 @@
 
                                     <div>
 
-                                        <h3
-                                            class="font-semibold text-slate-900">
+                                        <h3 class="font-semibold text-slate-900">
 
                                             {{ $row->title }}
 
                                         </h3>
 
-                                        @if($row->subtitle)
-
-                                            <p
-                                                class="text-sm text-slate-500">
+                                        @if ($row->subtitle)
+                                            <p class="text-sm text-slate-500">
 
                                                 {{ $row->subtitle }}
 
                                             </p>
-
                                         @endif
 
                                     </div>
@@ -552,31 +518,24 @@
 
                             </div>
 
-                            @if($row->active)
-
-                                <span
-                                    class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+                            @if ($row->active)
+                                <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
 
                                     Activo
 
                                 </span>
-
                             @else
-
-                                <span
-                                    class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
 
                                     Inactivo
 
                                 </span>
-
                             @endif
 
                         </div>
 
                         {{-- Información --}}
-                        <div
-                            class="mt-6 grid grid-cols-2 gap-4 text-sm">
+                        <div class="mt-6 grid grid-cols-2 gap-4 text-sm">
 
                             <div>
 
@@ -586,8 +545,7 @@
 
                                 </p>
 
-                                <p
-                                    class="mt-1 font-medium capitalize text-slate-900">
+                                <p class="mt-1 font-medium capitalize text-slate-900">
 
                                     {{ $row->section }}
 
@@ -603,8 +561,7 @@
 
                                 </p>
 
-                                <p
-                                    class="mt-1 font-medium text-slate-900">
+                                <p class="mt-1 font-medium text-slate-900">
 
                                     {{ $row->products->count() }}/5
 
@@ -615,19 +572,16 @@
                         </div>
 
                         {{-- Acciones --}}
-                        <div
-                            class="mt-6 flex gap-3">
+                        <div class="mt-6 flex gap-3">
 
-                            <button
-                                wire:click="edit({{ $row->id }})"
+                            <button wire:click="edit({{ $row->id }})"
                                 class="flex-1 rounded-2xl border border-slate-300 bg-white py-3 font-medium text-slate-700 transition hover:bg-slate-50">
 
                                 Editar
 
                             </button>
 
-                            <button
-                                wire:click="remove({{ $row->id }})"
+                            <button wire:click="remove({{ $row->id }})"
                                 wire:confirm="¿Eliminar el carrusel y todos sus ítems?"
                                 class="flex-1 rounded-2xl border border-red-200 bg-white py-3 font-medium text-red-600 transition hover:bg-red-50">
 
@@ -645,35 +599,31 @@
 
                 <div class="p-10 text-center">
 
-                    <div
-                        class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
+                    <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
 
                         📦
 
                     </div>
 
-                    <h3
-                        class="text-lg font-semibold text-slate-900">
+                    <h3 class="text-lg font-semibold text-slate-900">
 
                         No hay carruseles
 
                     </h3>
 
-                    <p
-                        class="mt-2 text-slate-500">
+                    <p class="mt-2 text-slate-500">
 
                         Creá tu primer carrusel para comenzar.
 
                     </p>
 
                 </div>
-
             @endforelse
 
         </div>
     </div>
 
-    @if($showDeleteModal)
+    @if ($showDeleteModal)
         @include('livewire.carousel.carousel-confirm-delete')
     @endif
 

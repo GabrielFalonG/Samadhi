@@ -95,12 +95,15 @@
                         {{-- DESCRIPCIÓN + INGREDIENTES --}}
                         {{-- ================================================= --}}
 
-                        <div class="max-h-[300px] overflow-y-auto pr-2">
+                        <div class="max-h-[250px] overflow-y-auto pr-2">
 
                             {{-- Descripción --}}
+
                             <div x-show="productModal.product?.long_description">
-                                <p class="text-[15px] leading-7 text-stone-600"
-                                    x-text="productModal.product?.long_description ?? ''"></p>
+                                <p
+                                    class="text-[15px] leading-7 text-stone-600 whitespace-pre-line"
+                                    x-text="productModal.product?.long_description ?? ''"
+                                ></p>
                             </div>
 
 

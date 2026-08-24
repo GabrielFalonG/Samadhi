@@ -69,34 +69,37 @@
                         </div>
 
 
-                        {{-- Descripción larga --}}
-                        <p class="text-xs text-stone-600 leading-relaxed"
-                            x-text="productModal.product?.long_description ?? ''"></p>
+                        <div class="max-h-[250px] overflow-y-auto pr-2">
+                            {{-- Descripción larga --}}
+                            <p
+                                class="text-[15px] leading-7 text-stone-600 whitespace-pre-line"
+                                x-text="productModal.product?.long_description ?? ''"
+                            ></p>
 
+                            {{-- Ingredientes --}}
+                            <div x-show="productModal.product?.ingredients"
+                                class="mt-6 pt-4 border-t border-dashed border-stone-200">
+                                <span
+                                    class="block text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-400 mb-2">
+                                    Ingredientes Principales
+                                </span>
 
-                        {{-- Ingredientes --}}
-                        <div x-show="productModal.product?.ingredients"
-                            class="mt-6 pt-4 border-t border-dashed border-stone-200">
-                            <span
-                                class="block text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-400 mb-2">
-                                Ingredientes Principales
-                            </span>
+                                <div class="flex flex-wrap gap-2">
 
-                            <div class="flex flex-wrap gap-2">
+                                    <template
+                                        x-for="ingredient in (productModal.product?.ingredients ?? '')
+                                                .split(',')
+                                                .map(i => i.trim())
+                                                .filter(Boolean)"
+                                        :key="ingredient">
+                                        <span x-text="ingredient"
+                                            class="rounded-full bg-[#F3EFEA] px-4 py-1.5 text-xs text-stone-700"></span>
+                                    </template>
 
-                                <template
-                                    x-for="ingredient in (productModal.product?.ingredients ?? '')
-                                            .split(',')
-                                            .map(i => i.trim())
-                                            .filter(Boolean)"
-                                    :key="ingredient">
-                                    <span x-text="ingredient"
-                                        class="rounded-full bg-[#F3EFEA] px-4 py-1.5 text-xs text-stone-700"></span>
-                                </template>
-
+                                </div>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
 
 

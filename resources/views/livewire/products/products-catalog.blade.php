@@ -19,10 +19,8 @@
 
         document.body.classList.remove('overflow-hidden');
     }
-}"
-@keydown.escape.window="closeProduct()"
-@product-modal:close.window="closeProduct()"
->
+}" @keydown.escape.window="closeProduct()"
+    @product-modal:close.window="closeProduct()">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         <!-- COMPONENTE MOBILE FILTERS (Solo visible en mobile) -->
@@ -163,18 +161,14 @@
 
                         {{-- Descripción --}}
                         @if ($categoryObj?->description)
-
                             <p class="mt-4 max-w-3xl text-base leading-7 text-stone-600 md:text-lg md:leading-8">
                                 {{ $categoryObj->description }}
                             </p>
-
                         @else
-
                             <p class="mt-4 max-w-3xl text-base leading-7 text-stone-600 md:text-lg md:leading-8">
                                 Explorá nuestra colección de productos diseñados para acompañar
                                 tu bienestar y conectar con tu energía cada día.
                             </p>
-
                         @endif
 
                     </div>
@@ -193,26 +187,18 @@
 
 
                 <!-- Grid de Cards Samadhi -->
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
                     @forelse($items as $item)
                         <div wire:key="carousel-item-wrapper-{{ $item['id'] }}">
-
                             @include('livewire.carousel.carousel-item', ['item' => $item])
-
                         </div>
-
                     @empty
-
                         <div>
-
                             <p>
                                 No se han encontrado productos
                             </p>
-
                         </div>
                     @endforelse
-
                 </div>
 
 

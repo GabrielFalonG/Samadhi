@@ -30,6 +30,7 @@ Route::view('profile', 'profile')
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
     Route::prefix('admin')->group(function () {
+        Route::get('/dashboard', Dashboard::class)->name('admin.dashboard');
         Route::get('/carousels', CarouselAdmin::class)->name('admin.carousels');
         Route::get('/carousels/create', CarouselCreateAdmin::class)->name('admin.carousels.create');
         Route::get('/carousels/edit/{id}', CarouselEditAdmin::class)->name('admin.carousels.edit');

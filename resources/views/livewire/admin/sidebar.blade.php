@@ -1,6 +1,6 @@
 {{-- Sidebar Desktop --}}
 <aside
-    class="hidden lg:flex lg:w-72 bg-gradient-to-b from-violet-900 to-violet-950 text-white flex-col">
+    class="hidden lg:flex lg:w-72 sticky top-16 h-[calc(100vh-4rem)] bg-gradient-to-b from-violet-900 to-violet-950 text-white flex-col overflow-y-auto">
 
     {{-- Logo --}}
     <div class="px-8 py-10">
@@ -19,7 +19,7 @@
     <nav class="flex-1 px-5 space-y-2">
 
         <a
-            href="#"
+            href="{{ route('admin.dashboard') }}"
             @class([
                 'flex items-center gap-3 rounded-xl px-4 py-3',
                 'bg-violet-700 font-medium' => request()->routeIs('admin.dashboard'),
@@ -74,7 +74,7 @@
 
         </a>
 
-        <a
+        {{-- <a
             href="#"
             @class([
                 'flex items-center gap-3 rounded-xl px-4 py-3',
@@ -86,9 +86,9 @@
 
             Reportes
 
-        </a>
+        </a> --}}
 
-        <a
+        {{-- <a
             href="#"
             @class([
                 'flex items-center gap-3 rounded-xl px-4 py-3',
@@ -100,7 +100,7 @@
 
             Configuración
 
-        </a>
+        </a> --}}
 
     </nav>
 
