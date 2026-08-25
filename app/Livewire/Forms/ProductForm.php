@@ -16,14 +16,14 @@ class ProductForm extends Form
     #[Validate('nullable|string|min:3|max:250')]
     public string $description = '';
 
-    #[Validate('nullable|string|min:3|max:500')]
+    #[Validate('nullable|string|min:3|max:65535')]
     public string $long_description = '';
 
     #[Validate('nullable|string|min:3|max:500')]
     public string $ingredients = '';
 
     #[Validate('required|numeric|min:0')]
-    public $price = '';
+    public ?string $price = null;
 
     #[Validate('boolean')]
     public bool $active = true;
@@ -47,7 +47,7 @@ class ProductForm extends Form
             title: $this->title,
             description: $this->description,
             long_description: $this->long_description,
-            price: $this->price,
+            price: $this->price ?? null,
             active: $this->active,
             image: $this->image,
             ingredients: $this->ingredients,
@@ -139,7 +139,7 @@ class ProductForm extends Form
 
             'long_description.string'   => 'La descripción detallada debe ser un texto válido.',
             'long_description.min'      => 'La descripción detallada debe tener al menos 3 caracteres.',
-            'long_description.max'      => 'La descripción detallada no puede superar los 500 caracteres.',
+            'long_description.max'      => 'La descripción detallada superó el límite permitido de caracteres.',
 
             'ingredients.string'        => 'Los ingredientes deben ser un texto válido.',
             'ingredients.min'           => 'Los ingredientes deben tener al menos 3 caracteres.',

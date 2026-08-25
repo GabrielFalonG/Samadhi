@@ -31,6 +31,7 @@ class ProductsAdminEdit extends Component
 
     //Modal
     public bool $showConfirmModal = false;
+    public ?string $previewDevice = null;
 
     protected ProductServiceInterface $productService;
     protected CategoryServiceInterface $categoryService;
@@ -87,6 +88,14 @@ class ProductsAdminEdit extends Component
     public function cancelSave(): void
     {
         $this->showConfirmModal = false;
+    }
+
+    public function getPreviewProduct(): array
+    {
+        return [
+            ...$this->form->toDto()->toArray(),
+            'image_url' => $this->imagePreview,
+        ];
     }
 
     public function save(): void

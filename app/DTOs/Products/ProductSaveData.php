@@ -12,7 +12,7 @@ class ProductSaveData
         public readonly string $title,
         public readonly ?string $description,
         public readonly ?string $long_description,
-        public readonly float $price,
+        public readonly ?float $price,
         public readonly bool $active,
         public readonly array $categories,
         public readonly ?string $ingredients,
@@ -36,10 +36,12 @@ class ProductSaveData
             'productId'   => $this->productId,
             'title'       => $this->title,
             'description' => $this->description,
+            'long_description' => $this->long_description,
             'price'       => $this->price,
             'active'      => $this->active,
             'image'       => $this->image,
             'categories'  => $this->categories,
+            'ingredients' => $this->ingredients,
         ];
     }
 }

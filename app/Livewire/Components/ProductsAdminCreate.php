@@ -84,6 +84,14 @@ class ProductsAdminCreate extends Component
         $this->showConfirmModal = false;
     }
 
+    public function getPreviewProduct(): array
+    {
+        return [
+            ...$this->form->toDto()->toArray(),
+            'image_url' => $this->imagePreview,
+        ];
+    }
+
     public function save(): void
     {
         try {

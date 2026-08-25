@@ -1,27 +1,29 @@
-<div class="bg-stone-50 min-h-screen py-10 sm:py-14" x-data="{
-    productModal: {
-        open: false,
-        product: null
-    },
+<div class="bg-stone-50 min-h-screen py-10 sm:py-14"
+    x-data="{
+        productModal: {
+            open: false,
+            product: null
+        },
 
-    isMobile: window.innerWidth < 1024,
+        isMobile: window.innerWidth < 1024,
+        isPreview: false,
 
-    openProduct(product) {
-        this.productModal.product = product;
-        this.productModal.open = true;
+        openProduct(product) {
+            this.productModal.product = product;
+            this.productModal.open = true;
 
-        document.body.classList.add('overflow-hidden');
-    },
+            document.body.classList.add('overflow-hidden');
+        },
 
-    closeProduct() {
-        this.productModal.open = false;
-        this.productModal.product = null;
+        closeProduct() {
+            this.productModal.open = false;
+            this.productModal.product = null;
 
-        document.body.classList.remove('overflow-hidden');
-    }
-}"
-@keydown.escape.window="closeProduct()"
-@product-modal:close.window="closeProduct()"
+            document.body.classList.remove('overflow-hidden');
+        }
+    }"
+    @keydown.escape.window="closeProduct()"
+    @product-modal:close.window="closeProduct()"
 >
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,7 +51,7 @@
         {{-- Grilla de Productos --}}
         @if ($products->count() > 0)
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
 
                 @foreach ($products as $product)
                     <div wire:key="fav-grid-item-{{ $product->id }}">

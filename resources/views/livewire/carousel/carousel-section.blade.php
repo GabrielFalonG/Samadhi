@@ -5,6 +5,7 @@
     },
 
     isMobile: window.innerWidth < 1024,
+    isPreview: false,
 
     openProduct(product) {
         this.productModal.product = product;

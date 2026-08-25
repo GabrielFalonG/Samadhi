@@ -44,12 +44,12 @@
                     <div>
 
                         {{-- Título --}}
-                        <h2 class="mt-1 text-3xl sm:text-4xl font-normal text-stone-800"
-                            x-text="productModal.product?.name ?? productModal.product?.title"></h2>
+                        <h2 class="font-serif text-4xl leading-tight text-stone-900 md:text-5xl"
+                            x-text="productModal.product?.title"></h2>
 
 
                         {{-- Descripción --}}
-                        <p class="mt-2 text-sm text-stone-600 leading-relaxed"
+                        <p class="mt-3 text-sm text-stone-600 leading-relaxed"
                             x-text="productModal.product?.subtitle ?? productModal.product?.description"></p>
 
 
@@ -71,10 +71,10 @@
 
                         <div class="max-h-[250px] overflow-y-auto pr-2">
                             {{-- Descripción larga --}}
-                            <p
-                                class="text-[15px] leading-7 text-stone-600 whitespace-pre-line"
-                                x-text="productModal.product?.long_description ?? ''"
-                            ></p>
+                            <div x-show="productModal.product?.long_description"
+                                class="prose prose-sm sm:prose-base prose-stone max-w-none"
+                                x-html="productModal.product?.long_description ?? ''">
+                            </div>
 
                             {{-- Ingredientes --}}
                             <div x-show="productModal.product?.ingredients"
@@ -123,7 +123,7 @@
 
                             {{-- Agregar al carrito --}}
                             <button type="button" @click="$wire.addToCart(productModal.product.id)"
-                                wire:loading.attr="disabled" wire:target="addToCart"
+                                wire:loading.attr="disabled" wire:target="addToCart" :disabled="isPreview"
                                 class="flex min-h-[52px] w-1/2 items-center justify-center gap-2 rounded-full bg-[#A98B68] px-4 text-xs font-medium text-white shadow-sm transition-all duration-200 hover:bg-[#8D7358] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70">
 
                                 {{-- Estado normal --}}
